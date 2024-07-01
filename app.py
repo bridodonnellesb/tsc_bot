@@ -6,7 +6,6 @@ import uuid
 from itertools import combinations
 from dotenv import load_dotenv
 import httpx
-import requests
 from quart import (
     Blueprint,
     Quart,
@@ -17,14 +16,12 @@ from quart import (
     render_template,
 )
 
-from PIL import Image
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
 from math import sqrt
 import re
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, ContentSettings
-from io import BytesIO
 
 from openai import AsyncAzureOpenAI
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
@@ -822,12 +819,6 @@ def prepare_model_args(request_body):
 
     return model_args
 
-def getPage(midpoint_offset, page_list):
-    for page in page_list:
-        if page["Start"] <= midpoint_offset <= page["End"]:
-            return page["Page"]
-    return None  # Return None if no page matches
-
 async def promptflow_request(request):
     try:
         headers = {
@@ -1412,130 +1403,5 @@ async def generate_title(conversation_messages):
         return title
     except Exception as e:
         return messages[-2]["content"]
-
-@bp.route("/skillset/page", methods=["POST"])
-async def add_page():
-    try:
-        request_json = await request.get_json()
-        values = request_json.get("values", None)
-        array = []
-        id = 0
-        for item in values:
-            offsets = item["data"]["offsets"]
-            pages = item["data"]["pages"]
-            page_list = []
-            previous_offset = 0
-            index = 0
-            for offset in offsets:
-                index += 1
-                midpoint = (previous_offset + offset) // 2  # Calculate the midpoint
-                page_list.append({"Page": index, "Start": previous_offset + 1, "End": offset, "Midpoint": midpoint})
-                previous_offset = offset
-
-            pageNumbers = []
-            total_offset = 0
-            for text in pages:
-                midpoint_offset = total_offset + (len(text) - 500) // 2  # Calculate the midpoint for the current page
-                pageNumbers.append(getPage(midpoint_offset, page_list))  # Use the midpoint to get the page number
-                total_offset += len(text) - 500
-
-            output={
-                "recordId": id,
-                "data": {
-                    "pageNumber": pageNumbers
-                },
-                "errors": None,
-                "warnings": None
-            }
-            id+=1
-            array.append(output)
-        response = jsonify({"values":array})
-        return response, 200  # Status code should be 200 for success
-
-    except Exception as e:
-        logging.exception("Exception in /skillset/page")
-        exception = str(e)
-        return jsonify({"error": exception}), 500
-
-def distance_from_top_left(point):
-    return sqrt(point.x**2 + point.y**2)
-    
-def screenshot_formula(url, formula_filepath, points):
-    blob_service_client = BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
-    response=requests.get(url)
-    image = Image.open(BytesIO(response.content))
-    x1, y1 = points[0].x, points[0].y
-    x2, y2 = points[2].x, points[2].y
-    cropped_image = image.crop((x1, y1, x2, y2)) 
-    image_stream = BytesIO()
-    cropped_image.save(image_stream, format='JPEG')  # You can change 'PNG' to the appropriate format if needed
-    image_stream.seek(0)  # Seek to the beginning of the stream
-    blob_client = blob_service_client.get_blob_client(container="tsc-formulas", blob=formula_filepath)
-    blob_client.upload_blob(image_stream.getvalue(), blob_type="BlockBlob")
-
-@bp.route("/skillset/formula", methods=["POST"])
-async def get_formula():
-    try:
-        request_json = await request.get_json()
-        values = request_json.get("values", None)
-        error = "values"
-        array = []
-        id = 0
-        
-        document_analysis_client = DocumentAnalysisClient(
-            endpoint=DOCUMENT_INTELLIGENCE_ENDPOINT, credential=AzureKeyCredential(DOCUMENT_INTELLIGENCE_KEY)
-        )
-        error = "intelligence connection"
-        for item in values:
-            for image in item["data"]["image"]:
-                error = image
-                poller = document_analysis_client.begin_analyze_document_from_url(
-                    "prebuilt-read", document_url=image,features=[AnalysisFeature.FORMULAS]
-                )
-                result = poller.result()
-                error = "begin_analyze_document_from_url"
-                lines = [{"polygon":obj.polygon, "content":obj.content, "type":"text"} for obj in result.pages[0].lines]
-
-                for formula_id, f in enumerate(result.pages[0].formulas):
-                    pattern = r'https://datascienceteampocra7fd.blob.core.windows.net/ms-az-search-indexercache-c489d848-0e43-4de4-bf2d-2dc331f5a378/([\w-]+)/binary/([\w-]+)\.jpg'
-                    match = re.search(pattern, image)
-                    file_source = match.group(1)
-                    page_source = match.group(2)
-                    formula_name = f"formula_{file_source}_{page_source}_{formula_id}.jpg"
-                    error = "binary search"
-                    screenshot_formula(image,formula_name,f.polygon)
-                    error = "screenshot_formula"
-                    lines.append({"polygon":f.polygon, "content":formula_name, "type":"formula"})
-
-                sorted_objects = sorted(lines, key=lambda obj: distance_from_top_left(obj["polygon"][0]))
-
-                offsets = []
-                formulas = []
-                characters = 0
-                for obj in sorted_objects:
-                    if obj["type"]=="formula":
-                        offsets.append(characters)
-                        formulas.append(obj["content"])
-                    characters += len(obj["content"])
-
-                output={
-                    "recordId": id,
-                    "data": {
-                        "formula": formulas,
-                        "offset": offsets
-                    },
-                    "errors": None,
-                    "warnings": None
-                }
-                id+=1
-                array.append(output)
-        response = jsonify({"values":array})
-        return response, 200  # Status code should be 200 for success
-
-    except Exception as e:
-        logging.exception("Exception in /skillset/formula")
-        exception = str(e)
-        return jsonify({"error":error}), 500
-
 
 app = create_app()
