@@ -1,0 +1,24 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins");
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    background: #f2f5f5;
+    font-family: "St. Ryde", "Poppins", Arial, sans-serif;
+    /* font-family: "St. Ryde", "Poppins", "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif; */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+    height: 100%;
+}
