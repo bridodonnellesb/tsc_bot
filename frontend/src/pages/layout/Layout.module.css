@@ -4,9 +4,9 @@
     height: 100%;
 }
 
-.header {
-    background-color: #f2f5f5;
-}
+/* .header {
+    background-color: #0c172c;
+} */
 
 .headerContainer {
     display: flex;
@@ -28,7 +28,7 @@
     line-height: 28px;
     display: flex;
     align-items: flex-end;
-    color: #242424;
+    color: #ffcd00;
 }
 
 .headerIcon {

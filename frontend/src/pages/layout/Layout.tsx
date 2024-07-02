@@ -1,6 +1,6 @@
 import { Outlet, Link } from "react-router-dom";
 import styles from "./Layout.module.css";
-import EI from "../../assets/EI.svg";
+import ESB from "../../assets/ESB.svg";
 import { CopyRegular } from "@fluentui/react-icons";
 import { Dialog, Stack, TextField, Dropdown, IDropdownOption } from "@fluentui/react";
 import { useContext, useEffect, useState } from "react";
@@ -99,7 +99,7 @@ const Layout = () => {
                 <Stack horizontal verticalAlign="center" horizontalAlign="space-between">
                     <Stack horizontal verticalAlign="center">
                         <img
-                            src={ui?.logo ? ui.logo : EI}
+                            src={ui?.logo ? ui.logo : ESB}
                             className={styles.headerIcon}
                             aria-hidden="true"
                         />
@@ -108,14 +108,6 @@ const Layout = () => {
                         </Link>
                     </Stack>
                     <Stack horizontal tokens={{ childrenGap: 10 }} className={styles.shareButtonContainer}>
-                        <Dropdown
-                            placeholder="Select system to filter by"
-                            multiSelect
-                            options={dropdownOptions}
-                            selectedKeys={selectedKeys}
-                            onChange={onDropdownChange}
-                            styles={{ dropdown: { width: 250 } }} // Adjust width as needed
-                        />
                         {(appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured) &&
                             <HistoryButton onClick={handleHistoryClick} text={appStateContext?.state?.isChatHistoryOpen ? hideHistoryLabel : showHistoryLabel} />
                         }

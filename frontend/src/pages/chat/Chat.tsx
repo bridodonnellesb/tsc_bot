@@ -10,7 +10,7 @@ import { isEmpty } from "lodash";
 import DOMPurify from 'dompurify';
 
 import styles from "./Chat.module.css";
-import EI from "../../assets/EI.svg";
+import ESB from "../../assets/ESB.svg";
 import { XSSAllowTags } from "../../constants/xssAllowTags";
 
 import {
@@ -657,7 +657,7 @@ const Chat = () => {
                         {!messages || messages.length < 1 ? (
                             <Stack className={styles.chatEmptyState}>
                                 <img
-                                    src={ui?.chat_logo ? ui.chat_logo : EI}
+                                    src={ui?.chat_logo ? ui.chat_logo : ESB}
                                     className={styles.chatIcon}
                                     aria-hidden="true"
                                 />
@@ -726,7 +726,7 @@ const Chat = () => {
                                 </Stack>
                             )}
                             <Stack>
-                                {/* {appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured &&  */}
+                                {appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured && 
                                 <CommandBarButton
                                     role="button"
                                     styles={{
@@ -734,14 +734,14 @@ const Chat = () => {
                                             color: '#FFFFFF',
                                         },
                                         iconDisabled: {
-                                            color: "#BDBDBD !important"
+                                            color: "#8795a2 !important"
                                         },
                                         root: {
                                             color: '#FFFFFF',
-                                            background: '#009FDA'
-                                            // background: "radial-gradient(109.81% 107.82% at 100.1% 90.19%, #0F6CBD 33.63%, #2D87C3 70.31%, #8DDDD8 100%)"
+                                            background: '#009fdf'
                                         },
                                         rootDisabled: {
+                                            color: '#009fdf',
                                             background: "#F0F0F0"
                                         }
                                     }}
@@ -751,7 +751,7 @@ const Chat = () => {
                                     disabled={disabledButton()}
                                     aria-label="start a new chat button"
                                 /> 
-                                {/* } */}
+                                }
                                 <Dialog
                                     hidden={hideErrorDialog}
                                     onDismiss={handleErrorDialogClose}
