@@ -48,6 +48,17 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, conv
         <Stack horizontal className={styles.questionInputContainer}>
             <TextField
                 className={styles.questionInputTextArea}
+                styles={{
+                    fieldGroup:{
+                        backgroundColor: "#0e2b45"
+                    },
+                    field: {
+                        color: "#8795a2",
+                        '::placeholder': {
+                            color: '#8795a2', // Change the placeholder color
+                        },
+                    }
+                }}
                 placeholder={placeholder}
                 multiline
                 resizable={false}
