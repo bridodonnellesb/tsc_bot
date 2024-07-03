@@ -55,7 +55,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, conv
                     field: {
                         color: "#8795a2",
                         '::placeholder': {
-                            color: '#8795a2', // Change the placeholder color
+                            color: '#8795a2',
                         },
                     }
                 }}
