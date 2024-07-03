@@ -22,7 +22,8 @@
 }
 
 .itemCell:hover {
-    background: #E6E6E6;
+    background: #0e2b45;
+    color:#ffffff
 }
 
 .itemButton {
