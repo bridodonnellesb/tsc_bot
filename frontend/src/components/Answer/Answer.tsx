@@ -195,6 +195,10 @@ export const Answer = ({
                 </SyntaxHighlighter>
             );
         },
+        // img({node, ...props}) {
+        //     // You can add custom styling or attributes here
+        //     return <img style={{ maxWidth: '100%' }} {...props} />;
+        // },
     };
     return (
         <>
