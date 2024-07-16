@@ -22,6 +22,7 @@ export const enumerateCitations = (citations: Citation[]) => {
 
 export function parseAnswer(answer: AskResponse): ParsedAnswer {
     let answerText = answer.answer;
+    answerText = answerText.replaceAll('![](','![](https://datascienceteampocra7fd.blob.core.windows.net/tsc-formulas-store/')
     const citationLinks = answerText.match(/\[(doc\d\d?\d?)]/g);
 
     const lengthDocN = "[doc".length;
