@@ -209,11 +209,11 @@ class CosmosConversationClient():
         
             return sas_token
         async for item in self.container_client.query_items(query=query, parameters=parameters):
-            if item.role=="tool":
-                content = json.loads(item.content)
+            if item["role"]=="tool":
+                content = json.loads(item["content"])
                 for i, chunk in enumerate(content["citations"]):
                     content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
-                item.content = json.dumps(content)
+                item["content"] = json.dumps(content)
             messages.append(item)
 
         return messages
