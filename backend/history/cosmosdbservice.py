@@ -186,7 +186,7 @@ class CosmosConversationClient():
         messages = []
         blob_service_client =BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
         def split_url(url):
-            pattern = fr'{BLOB_ACCOUNT}/([\w-]+)/([\w-]+)\.pdf'
+            pattern = fr'{BLOB_ACCOUNT}/([\w-]+)/([\w-]+\.\w+)'
             match = re.search(pattern, url)
             container = match.group(1)
             blob = match.group(2)
@@ -213,7 +213,7 @@ class CosmosConversationClient():
                 content = json.loads(item["content"])
                 for i, chunk in enumerate(content["citations"]):
                     content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
-                item["content"] = json.dumps(content)
+                item["content"] = content #json.dumps(content)
             messages.append(item)
 
         return messages
