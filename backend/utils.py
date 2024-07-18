@@ -5,6 +5,7 @@ import requests
 import dataclasses
 from datetime import datetime, timedelta
 import re
+from urllib.parse import urlparse
 from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
 
 DEBUG = os.environ.get("DEBUG", "false")
@@ -102,6 +103,10 @@ def split_url(url):
     blob = match.group(2)
     return container, blob
 
+def remove_query_from_url(url):
+    parsed_url = urlparse(url)
+    url_without_query = parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path
+    return url_without_query
 
 def format_non_streaming_response(chatCompletion, history_metadata, apim_request_id):
     response_obj = {
@@ -119,8 +124,8 @@ def format_non_streaming_response(chatCompletion, history_metadata, apim_request
         if message:
             if hasattr(message, "context"):
                 content = message.context
-                # for i, chunk in enumerate(content["citations"]):
-                #     content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
+                for i, chunk in enumerate(content["citations"]):
+                    content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
                 response_obj["choices"][0]["messages"].append(
                     {
                         "role": "tool",
@@ -153,9 +158,12 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
         if delta:
             if hasattr(delta, "context"):
                 content = delta.context
-                # for i, chunk in enumerate(content["citations"]):
-                #     content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
-                messageObj = {"role": "tool", "content": json.dumps(content)}
+                for i, chunk in enumerate(content["citations"]):
+                    content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
+                messageObj = {
+                    "role": "tool", 
+                    "content": json.dumps(content)
+                }
                 response_obj["choices"][0]["messages"].append(messageObj)
                 return response_obj
             if delta.role == "assistant" and hasattr(delta, "context"):

@@ -31,11 +31,13 @@ from backend.history.cosmosdbservice import CosmosConversationClient
 from backend.utils import (
     format_as_ndjson,
     format_stream_response,
+    remove_query_from_url,
     generateFilterString,
     parse_multi_columns,
     format_non_streaming_response,
     convert_to_pf_format,
     format_pf_non_streaming_response,
+    generate_SAS
 )
 
 bp = Blueprint("routes", __name__, static_folder="static", template_folder="static")
@@ -911,31 +913,6 @@ def get_frontend_settings():
         logging.exception("Exception in /frontend_settings")
         return jsonify({"error": str(e)}), 500
 
-def generate_SAS(url):
-    container, blob = split_url(url)
-    blob_service_client =BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
-    blob_client = blob_service_client.get_blob_client(container=container, blob=blob)
-
-    sas_token_expiry_time = datetime.utcnow() + timedelta(hours=1)  # 1 hour from now
-
-    sas_token = generate_blob_sas(
-        account_name=blob_client.account_name,
-        container_name=blob_client.container_name,
-        blob_name=blob_client.blob_name,
-        account_key=BLOB_CREDENTIAL,
-        permission=BlobSasPermissions(read=True),
-        expiry=sas_token_expiry_time
-    )
-
-    return sas_token
-
-def split_url(url):
-    pattern = fr'{BLOB_ACCOUNT}/([\w-]+)/([\w-]+\.\w+)'
-    match = re.search(pattern, url)
-    container = match.group(1)
-    blob = match.group(2)
-    return container, blob
-
 ## Conversation History API ##
 @bp.route("/history/generate", methods=["POST"])
 async def add_conversation():
@@ -1020,6 +997,11 @@ async def update_conversation():
         if len(messages) > 0 and messages[-1]["role"] == "assistant":
             if len(messages) > 1 and messages[-2].get("role", None) == "tool":
                 # write the tool message first
+                messages[-2]
+                content = json.loads(messages[-2])
+                for i, chunk in enumerate(content["citations"]):
+                    content["citations"][i]["url"]=remove_query_from_url(chunk["url"])
+                messages[-2] = json.dumps(content)
                 await cosmos_conversation_client.create_message(
                     uuid=str(uuid.uuid4()),
                     conversation_id=conversation_id,
