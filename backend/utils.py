@@ -3,6 +3,9 @@ import json
 import logging
 import requests
 import dataclasses
+from datetime import datetime, timedelta
+import re
+from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
 
 DEBUG = os.environ.get("DEBUG", "false")
 if DEBUG.lower() == "true":
@@ -12,6 +15,8 @@ AZURE_SEARCH_PERMITTED_GROUPS_COLUMN = os.environ.get(
     "AZURE_SEARCH_PERMITTED_GROUPS_COLUMN"
 )
 
+BLOB_CREDENTIAL = os.environ.get("BLOB_CREDENTIAL")
+BLOB_ACCOUNT = os.environ.get("BLOB_ACCOUNT")
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
@@ -72,6 +77,31 @@ def generateFilterString(userToken):
     group_ids = ", ".join([obj["id"] for obj in userGroups])
     return f"{AZURE_SEARCH_PERMITTED_GROUPS_COLUMN}/any(g:search.in(g, '{group_ids}'))"
 
+def generate_SAS(url):
+    container, blob = split_url(url)
+    blob_service_client =BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
+    blob_client = blob_service_client.get_blob_client(container=container, blob=blob)
+
+    sas_token_expiry_time = datetime.utcnow() + timedelta(hours=1)  # 1 hour from now
+
+    sas_token = generate_blob_sas(
+        account_name=blob_client.account_name,
+        container_name=blob_client.container_name,
+        blob_name=blob_client.blob_name,
+        account_key=BLOB_CREDENTIAL,
+        permission=BlobSasPermissions(read=True),
+        expiry=sas_token_expiry_time
+    )
+
+    return sas_token
+
+def split_url(url):
+    pattern = fr'{BLOB_ACCOUNT}/([\w-]+)/([\w-]+\.\w+)'
+    match = re.search(pattern, url)
+    container = match.group(1)
+    blob = match.group(2)
+    return container, blob
+
 
 def format_non_streaming_response(chatCompletion, history_metadata, apim_request_id):
     response_obj = {
@@ -88,10 +118,13 @@ def format_non_streaming_response(chatCompletion, history_metadata, apim_request
         message = chatCompletion.choices[0].message
         if message:
             if hasattr(message, "context"):
+                content = message.context
+                for i, chunk in enumerate(content["citations"]):
+                    content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
                 response_obj["choices"][0]["messages"].append(
                     {
                         "role": "tool",
-                        "content": json.dumps(message.context),
+                        "content": json.dumps(content),
                     }
                 )
             response_obj["choices"][0]["messages"].append(
@@ -119,7 +152,10 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
         delta = chatCompletionChunk.choices[0].delta
         if delta:
             if hasattr(delta, "context"):
-                messageObj = {"role": "tool", "content": json.dumps(delta.context)}
+                content = delta.context
+                for i, chunk in enumerate(content["citations"]):
+                    content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
+                messageObj = {"role": "tool", "content": json.dumps(content)}
                 response_obj["choices"][0]["messages"].append(messageObj)
                 return response_obj
             if delta.role == "assistant" and hasattr(delta, "context"):

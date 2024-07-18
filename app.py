@@ -911,6 +911,30 @@ def get_frontend_settings():
         logging.exception("Exception in /frontend_settings")
         return jsonify({"error": str(e)}), 500
 
+def generate_SAS(url):
+    container, blob = split_url(url)
+    blob_service_client =BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
+    blob_client = blob_service_client.get_blob_client(container=container, blob=blob)
+
+    sas_token_expiry_time = datetime.utcnow() + timedelta(hours=1)  # 1 hour from now
+
+    sas_token = generate_blob_sas(
+        account_name=blob_client.account_name,
+        container_name=blob_client.container_name,
+        blob_name=blob_client.blob_name,
+        account_key=BLOB_CREDENTIAL,
+        permission=BlobSasPermissions(read=True),
+        expiry=sas_token_expiry_time
+    )
+
+    return sas_token
+
+def split_url(url):
+    pattern = fr'{BLOB_ACCOUNT}/([\w-]+)/([\w-]+\.\w+)'
+    match = re.search(pattern, url)
+    container = match.group(1)
+    blob = match.group(2)
+    return container, blob
 
 ## Conversation History API ##
 @bp.route("/history/generate", methods=["POST"])
@@ -963,7 +987,7 @@ async def add_conversation():
         # Submit request to Chat Completions for response
         request_body = await request.get_json()
         history_metadata["conversation_id"] = conversation_id
-        request_body["history_metadata"] = history_metadata
+        request_body["history_metadata"] = history_metadata                
         return await conversation_internal(request_body)
 
     except Exception as e:
