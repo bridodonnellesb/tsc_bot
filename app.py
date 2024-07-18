@@ -997,16 +997,15 @@ async def update_conversation():
         if len(messages) > 0 and messages[-1]["role"] == "assistant":
             if len(messages) > 1 and messages[-2].get("role", None) == "tool":
                 # write the tool message first
-                messages[-2]
                 content = json.loads(messages[-2])
                 for i, chunk in enumerate(content["citations"]):
                     content["citations"][i]["url"]=remove_query_from_url(chunk["url"])
-                messages[-2] = json.dumps(content)
+                filtered_content = json.dumps(content)
                 await cosmos_conversation_client.create_message(
                     uuid=str(uuid.uuid4()),
                     conversation_id=conversation_id,
                     user_id=user_id,
-                    input_message=messages[-2],
+                    input_message=filtered_content,
                 )
             # write the assistant message
             await cosmos_conversation_client.create_message(
