@@ -135,7 +135,38 @@ class CosmosConversationClient():
         else:
             return conversations[0]
  
+    def generate_SAS(self,url):
+        container, blob = self.split_url(url)
+        blob_service_client =BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
+        blob_client = blob_service_client.get_blob_client(container=container, blob=blob)
+    
+        sas_token_expiry_time = datetime.utcnow() + timedelta(hours=1)  # 1 hour from now
+    
+        sas_token = generate_blob_sas(
+            account_name=blob_client.account_name,
+            container_name=blob_client.container_name,
+            blob_name=blob_client.blob_name,
+            account_key=BLOB_CREDENTIAL,
+            permission=BlobSasPermissions(read=True),
+            expiry=sas_token_expiry_time
+        )
+    
+        return sas_token
+
+    def split_url(self,url):
+        pattern = fr'{BLOB_ACCOUNT}/([\w-]+)/([\w-]+\.\w+)'
+        match = re.search(pattern, url)
+        container = match.group(1)
+        blob = match.group(2)
+        return container, blob
+
     async def create_message(self, uuid, conversation_id, user_id, input_message: dict):
+        if input_message['role']=="tool":
+            content = json.loads(input_message['content'])
+            for i, chunk in enumerate(content["citations"]):
+                content["citations"][i]["url"]=chunk["url"]+"?"+self.generate_SAS(chunk["url"])
+            input_message["content"] = json.dumps(content)
+            
         message = {
             'id': uuid,
             'type': 'message',
@@ -184,35 +215,11 @@ class CosmosConversationClient():
         ]
         query = f"SELECT * FROM c WHERE c.conversationId = @conversationId AND c.type='message' AND c.userId = @userId ORDER BY c.timestamp ASC"
         messages = []
-        blob_service_client =BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
-        def split_url(url):
-            pattern = fr'{BLOB_ACCOUNT}/([\w-]+)/([\w-]+\.\w+)'
-            match = re.search(pattern, url)
-            container = match.group(1)
-            blob = match.group(2)
-            return container, blob
-
-        def generate_SAS(url):
-            container, blob = split_url(url)
-            blob_client = blob_service_client.get_blob_client(container=container, blob=blob)
-        
-            sas_token_expiry_time = datetime.utcnow() + timedelta(hours=1)  # 1 hour from now
-        
-            sas_token = generate_blob_sas(
-                account_name=blob_client.account_name,
-                container_name=blob_client.container_name,
-                blob_name=blob_client.blob_name,
-                account_key=BLOB_CREDENTIAL,
-                permission=BlobSasPermissions(read=True),
-                expiry=sas_token_expiry_time
-            )
-        
-            return sas_token
         async for item in self.container_client.query_items(query=query, parameters=parameters):
             if item["role"]=="tool":
                 content = json.loads(item["content"])
                 for i, chunk in enumerate(content["citations"]):
-                    content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
+                    content["citations"][i]["url"]=chunk["url"]+"?"+self.generate_SAS(chunk["url"])
                 item["content"] = json.dumps(content)
             messages.append(item)
 
