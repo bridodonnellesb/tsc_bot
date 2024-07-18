@@ -213,7 +213,7 @@ class CosmosConversationClient():
                 content = json.loads(item["content"])
                 for i, chunk in enumerate(content["citations"]):
                     content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
-                item["content"] = content #json.dumps(content)
+                item["content"] = json.dumps(content)
             messages.append(item)
 
         return messages
