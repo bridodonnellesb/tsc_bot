@@ -997,9 +997,9 @@ async def update_conversation():
         if len(messages) > 0 and messages[-1]["role"] == "assistant":
             if len(messages) > 1 and messages[-2].get("role", None) == "tool":
                 # write the tool message first
-                error = "loading error"
-                content = messages[-2]
-                error = content
+                error = f"loading error {messages[-2].get("content", None)}"
+                content = json.loads(messages[-2].get("content", None))
+                error = f"before for loop {content}"
                 for i, chunk in enumerate(content["citations"]):
                     error = chunk["url"]
                     content["citations"][i]["url"]=remove_query_from_url(chunk["url"])
