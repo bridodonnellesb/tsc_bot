@@ -879,7 +879,7 @@ async def conversation_internal(request_body):
     try:
         if SHOULD_STREAM:
             result = await stream_chat_request(request_body)
-            result.choices[0].message.content = append_SAS_to_image_link(response.choices[0].message.content),
+            # result.choices[0].message.content = append_SAS_to_image_link(response.choices[0].message.content),
             response = await make_response(format_as_ndjson(result))
             response.timeout = None
             response.mimetype = "application/json-lines"
@@ -1008,8 +1008,8 @@ async def update_conversation():
                     input_message=messages[-2]
                 )
             # write the assistant message
-            pattern = re.compile(r'(\!\[\]\([^)]+)\?[^)]*\)')
-            messages[-1]['content'] = pattern.sub(r'\1)', messages[-1]['content'])
+            # pattern = re.compile(r'(\!\[\]\([^)]+)\?[^)]*\)')
+            # messages[-1]['content'] = pattern.sub(r'\1)', messages[-1]['content'])
             await cosmos_conversation_client.create_message(
                 uuid=messages[-1]["id"],
                 conversation_id=conversation_id,
