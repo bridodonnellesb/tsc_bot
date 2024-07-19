@@ -844,6 +844,7 @@ async def send_chat_request(request):
         azure_openai_client = init_openai_client()
         raw_response = await azure_openai_client.chat.completions.with_raw_response.create(**model_args)
         response = raw_response.parse()
+        response.choices[0].message.content = append_SAS_to_image_link(response.choices[0].message.content),
         apim_request_id = raw_response.headers.get("apim-request-id") 
     except Exception as e:
         logging.exception("Exception in send_chat_request")
@@ -868,7 +869,6 @@ async def complete_chat_request(request_body):
 async def stream_chat_request(request_body):
     response, apim_request_id = await send_chat_request(request_body)
     history_metadata = request_body.get("history_metadata", {})
-    
     async def generate():
         async for completionChunk in response:
             yield format_stream_response(completionChunk, history_metadata, apim_request_id)
