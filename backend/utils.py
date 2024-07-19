@@ -103,7 +103,7 @@ def split_url(url):
     blob = match.group(2)
     return container, blob
 
-def remove_query_from_url(url):
+def remove_SAS_token(url):
     parsed_url = urlparse(url)
     url_without_query = parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path
     return url_without_query
