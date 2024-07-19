@@ -1008,8 +1008,8 @@ async def update_conversation():
                     input_message=messages[-2]
                 )
             # write the assistant message
-            pattern = re.compile(r'(\!\[\]\([^)]+)\?[^)]*\)')
-            messages[-1]['content'] = pattern.sub(r'\1)', messages[-1]['content'])
+            # pattern = re.compile(r'(\!\[\]\([^)]+)\?[^)]*\)')
+            # messages[-1]['content'] = pattern.sub(r'\1)', messages[-1]['content'])
             await cosmos_conversation_client.create_message(
                 uuid=messages[-1]["id"],
                 conversation_id=conversation_id,
