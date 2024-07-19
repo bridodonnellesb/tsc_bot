@@ -844,7 +844,6 @@ async def send_chat_request(request):
         azure_openai_client = init_openai_client()
         raw_response = await azure_openai_client.chat.completions.with_raw_response.create(**model_args)
         response = raw_response.parse()
-        response.choices[0].message.content = append_SAS_to_image_link(response.choices[0].message.content),
         apim_request_id = raw_response.headers.get("apim-request-id") 
     except Exception as e:
         logging.exception("Exception in send_chat_request")
@@ -880,6 +879,7 @@ async def conversation_internal(request_body):
     try:
         if SHOULD_STREAM:
             result = await stream_chat_request(request_body)
+            # result.choices[0].message.content = append_SAS_to_image_link(response.choices[0].message.content),
             response = await make_response(format_as_ndjson(result))
             response.timeout = None
             response.mimetype = "application/json-lines"
