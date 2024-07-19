@@ -183,7 +183,7 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
                 if delta.content:
                     messageObj = {
                         "role": "assistant",
-                        "content": append_SAS_to_image_link(delta.context),
+                        "content": append_SAS_to_image_link(delta.content),
                     }
                     response_obj["choices"][0]["messages"].append(messageObj)
                     return response_obj
