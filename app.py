@@ -997,20 +997,21 @@ async def update_conversation():
         if len(messages) > 0 and messages[-1]["role"] == "assistant":
             if len(messages) > 1 and messages[-2].get("role", None) == "tool":
                 # write the tool message first
-                error = f"loading error {messages[-2].get("content", None)}"
-                content = json.loads(messages[-2].get("content", None))
-                error = f"before for loop {content}"
-                for i, chunk in enumerate(content["citations"]):
-                    error = chunk["url"]
-                    content["citations"][i]["url"]=remove_query_from_url(chunk["url"])
-                error = f"before dump: {content}"
-                filtered_content = json.dumps(content)
-                error = f"filtered completed: {filtered_content}"
+                # error = f"loading error {messages[-2].get("content", None)}"
+                # content = json.loads(messages[-2].get("content", None))
+                # error = f"before for loop {content}"
+                # for i, chunk in enumerate(content["citations"]):
+                #     error = chunk["url"]
+                #     content["citations"][i]["url"]=remove_query_from_url(chunk["url"])
+                # error = f"before dump: {content}"
+                # filtered_content = json.dumps(content)
+                # error = f"filtered completed: {filtered_content}"
                 await cosmos_conversation_client.create_message(
                     uuid=str(uuid.uuid4()),
                     conversation_id=conversation_id,
                     user_id=user_id,
-                    input_message=filtered_content,
+                    # input_message=filtered_content,
+                    input_message=messages[-2]
                 )
             # write the assistant message
             await cosmos_conversation_client.create_message(
