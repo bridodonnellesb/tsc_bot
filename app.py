@@ -33,11 +33,11 @@ from backend.utils import (
     format_stream_response,
     remove_SAS_token,
     generateFilterString,
+    append_SAS_to_image_link,
     parse_multi_columns,
     format_non_streaming_response,
     convert_to_pf_format,
     format_pf_non_streaming_response,
-    generate_SAS
 )
 
 bp = Blueprint("routes", __name__, static_folder="static", template_folder="static")
@@ -1008,6 +1008,8 @@ async def update_conversation():
                     input_message=messages[-2]
                 )
             # write the assistant message
+            pattern = re.compile(r'(\!\[\]\([^)]+)\?[^)]*\)')
+            messages[-1]['content'] = pattern.sub(r'\1)', messages[-1]['content'])
             await cosmos_conversation_client.create_message(
                 uuid=messages[-1]["id"],
                 conversation_id=conversation_id,
