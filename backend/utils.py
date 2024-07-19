@@ -175,7 +175,7 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
             if delta.role == "assistant" and hasattr(delta, "context"):
                 messageObj = {
                     "role": "assistant",
-                    "context": append_SAS_to_image_link(delta.context),
+                    "context": delta.context #append_SAS_to_image_link(delta.context),
                 }
                 response_obj["choices"][0]["messages"].append(messageObj)
                 return response_obj
@@ -183,7 +183,7 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
                 if delta.content:
                     messageObj = {
                         "role": "assistant",
-                        "content": append_SAS_to_image_link(delta.content),
+                        "content": delta.content #append_SAS_to_image_link(delta.content),
                     }
                     response_obj["choices"][0]["messages"].append(messageObj)
                     return response_obj
