@@ -33,7 +33,6 @@ from backend.utils import (
     format_stream_response,
     remove_SAS_token,
     generateFilterString,
-    append_SAS_to_image_link,
     parse_multi_columns,
     format_non_streaming_response,
     convert_to_pf_format,
@@ -879,7 +878,6 @@ async def conversation_internal(request_body):
     try:
         if SHOULD_STREAM:
             result = await stream_chat_request(request_body)
-            # result.choices[0].message.content = append_SAS_to_image_link(response.choices[0].message.content),
             response = await make_response(format_as_ndjson(result))
             response.timeout = None
             response.mimetype = "application/json-lines"
