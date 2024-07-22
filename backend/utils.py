@@ -108,11 +108,11 @@ def remove_SAS_token(url):
     url_without_query = parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path
     return url_without_query
 
-def append_SAS_to_image_link(content):
-    pattern = r'(!\[\]\((.?*)\))'
-    def replacer(match):
-        return f"![]({match.group(2)}{generate_SAS(match.group(2))})"
-    return re.sub(pattern, replacer, content)
+# def append_SAS_to_image_link(content):
+#     pattern = r'(!\[\]\((.?*)\))'
+#     def replacer(match):
+#         return f"![]({match.group(2)}{generate_SAS(match.group(2))})"
+#     return re.sub(pattern, replacer, content)
 
 def format_non_streaming_response(chatCompletion, history_metadata, apim_request_id):
     response_obj = {
@@ -141,7 +141,7 @@ def format_non_streaming_response(chatCompletion, history_metadata, apim_request
             response_obj["choices"][0]["messages"].append(
                 {
                     "role": "assistant",
-                    "content": append_SAS_to_image_link(message.content),
+                    "content": message.content, #append_SAS_to_image_link(message.content),
                 }
             )
             return response_obj
