@@ -4,8 +4,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos import exceptions
 import json
 from backend.utils import (
-    generate_SAS,
-    append_SAS_to_image_link
+    generate_SAS
 )
   
 class CosmosConversationClient():

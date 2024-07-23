@@ -127,6 +127,7 @@ export enum Feedback {
     MissingCitation = "missing_citation",
     WrongCitation = "wrong_citation",
     OutOfScope = "out_of_scope",
+    OutOfDate = "out_of_date",
     InaccurateOrIrrelevant = "inaccurate_or_irrelevant",
     OtherUnhelpful = "other_unhelpful",
     HateSpeech = "hate_speech",

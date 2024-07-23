@@ -107,7 +107,7 @@ def remove_SAS_token(url):
     parsed_url = urlparse(url)
     url_without_query = parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path
     return url_without_query
-
+  
 def append_SAS_to_image_link(content):
     pattern = r'(!\[\]\((.?*)\))'
     def replacer(match):
@@ -175,7 +175,7 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
             if delta.role == "assistant" and hasattr(delta, "context"):
                 messageObj = {
                     "role": "assistant",
-                    "context": append_SAS_to_image_link(delta.context)
+                    "context": delta.context
                 }
                 response_obj["choices"][0]["messages"].append(messageObj)
                 return response_obj
@@ -183,7 +183,7 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
                 if delta.content:
                     messageObj = {
                         "role": "assistant",
-                        "content": append_SAS_to_image_link(delta.content)
+                        "content": delta.content
                     }
                     response_obj["choices"][0]["messages"].append(messageObj)
                     return response_obj
