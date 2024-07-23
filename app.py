@@ -7,6 +7,8 @@ from itertools import combinations
 from dotenv import load_dotenv
 import httpx
 import requests
+import base64
+from collections import namedtuple
 from quart import (
     Blueprint,
     Quart,
@@ -68,7 +70,7 @@ DOCUMENT_INTELLIGENCE_KEY = os.environ.get("DOCUMENT_INTELLIGENCE_KEY")
 # Blob Storage
 BLOB_CREDENTIAL = os.environ.get("BLOB_CREDENTIAL")
 BLOB_ACCOUNT = os.environ.get("BLOB_ACCOUNT")
-BLOB_CONTAINER = os.environ.get("BLOB_CONTAINER")
+FORMULA_IMAGE_CONTAINER = os.environ.get("FORMULA_IMAGE_CONTAINER")
 
 def create_app():
     app = Quart(__name__)
@@ -873,8 +875,7 @@ async def stream_chat_request(request_body):
     history_metadata = request_body.get("history_metadata", {})
     async def generate():
         async for completionChunk in response:
-            formated_chunk = format_stream_response(completionChunk, history_metadata, apim_request_id)
-            yield formated_chunk
+            yield format_stream_response(completionChunk, history_metadata, apim_request_id)            
 
     return generate()
 
@@ -1446,7 +1447,7 @@ def screenshot_formula(image_bytes, formula_filepath, points):
     cropped_image.save(image_stream, format='JPEG') 
     image_stream.seek(0) 
     content_settings = ContentSettings(content_type="image/jpeg")
-    blob_client = blob_service_client.get_blob_client(container=BLOB_CONTAINER, blob=formula_filepath)
+    blob_client = blob_service_client.get_blob_client(container=FORMULA_IMAGE_CONTAINER, blob=formula_filepath)
     blob_client.upload_blob(image_stream.getvalue(), content_settings=content_settings, blob_type="BlockBlob")
 
 def get_top_left(polygon):
@@ -1578,7 +1579,7 @@ async def get_formula():
                 for obj in sorted_array:
                     if obj["type"]=="formula":
                         offsets.append(characters)
-                        formulas_output.append(f'![]({BLOB_ACCOUNT}/{BLOB_CONTAINER}/{obj["content"]})')
+                        formulas_output.append(f'![]({BLOB_ACCOUNT}/{FORMULA_IMAGE_CONTAINER}/{obj["content"]})')
                     else:
                         characters += (len(obj["content"])+1)
 
