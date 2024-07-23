@@ -1391,6 +1391,12 @@ async def generate_title(conversation_messages):
     except Exception as e:
         return messages[-2]["content"]
 
+def getPage(midpoint_offset, page_list):
+    for page in page_list:
+        if page["Start"] <= midpoint_offset <= page["End"]:
+            return page["Page"]
+    return None  # Return None if no page matches
+
 @bp.route("/skillset/page", methods=["POST"])
 async def add_page():
     try:
