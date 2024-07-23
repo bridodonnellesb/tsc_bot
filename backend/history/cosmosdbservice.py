@@ -188,8 +188,8 @@ class CosmosConversationClient():
                 for i, chunk in enumerate(content["citations"]):
                     content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
                 item["content"] = json.dumps(content)
-            # if item["role"]=="assistant":
-            #     item["content"] = append_SAS_to_image_link(item["content"])
+            if item["role"]=="assistant":
+                item["content"] = append_SAS_to_image_link(item["content"])
             messages.append(item)
 
         return messages

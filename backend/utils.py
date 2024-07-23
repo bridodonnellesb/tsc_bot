@@ -108,11 +108,11 @@ def remove_SAS_token(url):
     url_without_query = parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path
     return url_without_query
 
-# def append_SAS_to_image_link(content):
-#     pattern = r'(!\[\]\((.?*)\))'
-#     def replacer(match):
-#         return f"![]({match.group(2)}{generate_SAS(match.group(2))})"
-#     return re.sub(pattern, replacer, content)
+def append_SAS_to_image_link(content):
+    pattern = r'(!\[\]\((.?*)\))'
+    def replacer(match):
+        return f"![]({match.group(2)}{generate_SAS(match.group(2))})"
+    return re.sub(pattern, replacer, content)
 
 def format_non_streaming_response(chatCompletion, history_metadata, apim_request_id):
     response_obj = {
@@ -141,7 +141,7 @@ def format_non_streaming_response(chatCompletion, history_metadata, apim_request
             response_obj["choices"][0]["messages"].append(
                 {
                     "role": "assistant",
-                    "content": message.content, #append_SAS_to_image_link(message.content),
+                    "content": message.content, 
                 }
             )
             return response_obj
@@ -175,7 +175,7 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
             if delta.role == "assistant" and hasattr(delta, "context"):
                 messageObj = {
                     "role": "assistant",
-                    "context": delta.context
+                    "context": append_SAS_to_image_link(delta.context)
                 }
                 response_obj["choices"][0]["messages"].append(messageObj)
                 return response_obj
@@ -183,7 +183,7 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
                 if delta.content:
                     messageObj = {
                         "role": "assistant",
-                        "content": delta.content 
+                        "content": append_SAS_to_image_link(delta.content)
                     }
                     response_obj["choices"][0]["messages"].append(messageObj)
                     return response_obj
