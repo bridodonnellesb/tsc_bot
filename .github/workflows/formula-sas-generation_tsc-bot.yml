@@ -66,4 +66,4 @@ jobs:
         with:
           app-name: 'tsc-bot'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_036B171703284DF3848DB69845101CCA }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1117C2740DBA4F2892365D22B1BAF039 }}
