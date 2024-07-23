@@ -970,7 +970,7 @@ async def add_conversation():
         return jsonify({"error": str(e)}), 500
 
 
-@bp.route("/history/update", methods=["POST"])
+@bp.route("/history/update", methods=["POST"]) 
 async def update_conversation():
     authenticated_user = get_authenticated_user_details(request_headers=request.headers)
     user_id = authenticated_user["user_principal_id"]
