@@ -107,6 +107,12 @@ def remove_SAS_token(url):
     parsed_url = urlparse(url)
     url_without_query = parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path
     return url_without_query
+  
+def append_SAS_to_image_link(content):
+    pattern = r'(!\[\]\((.?*)\))'
+    def replacer(match):
+        return f"![]({match.group(2)}{generate_SAS(match.group(2))})"
+    return re.sub(pattern, replacer, content)
 
 def format_non_streaming_response(chatCompletion, history_metadata, apim_request_id):
     response_obj = {
@@ -135,7 +141,7 @@ def format_non_streaming_response(chatCompletion, history_metadata, apim_request
             response_obj["choices"][0]["messages"].append(
                 {
                     "role": "assistant",
-                    "content": message.content,
+                    "content": append_SAS_to_image_link(message.content), 
                 }
             )
             return response_obj
@@ -155,7 +161,7 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
 
     if len(chatCompletionChunk.choices) > 0:
         delta = chatCompletionChunk.choices[0].delta
-        if delta:
+        if delta: 
             if hasattr(delta, "context"):
                 content = delta.context
                 for i, chunk in enumerate(content["citations"]):
@@ -177,7 +183,7 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
                 if delta.content:
                     messageObj = {
                         "role": "assistant",
-                        "content": delta.content 
+                        "content": delta.content
                     }
                     response_obj["choices"][0]["messages"].append(messageObj)
                     return response_obj
