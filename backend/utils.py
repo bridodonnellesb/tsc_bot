@@ -162,7 +162,7 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
 
     if len(chatCompletionChunk.choices) > 0:
         delta = chatCompletionChunk.choices[0].delta
-        if delta:
+        if delta: 
             if hasattr(delta, "context"):
                 content = delta.context
                 for i, chunk in enumerate(content["citations"]):
