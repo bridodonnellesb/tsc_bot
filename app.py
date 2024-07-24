@@ -33,6 +33,7 @@ from backend.utils import (
     format_stream_response,
     remove_SAS_token,
     generateFilterString,
+    remove_SAS_from_image_link,
     parse_multi_columns,
     format_non_streaming_response,
     convert_to_pf_format,
@@ -1007,8 +1008,7 @@ async def update_conversation():
                     input_message=messages[-2]
                 )
             # write the assistant message
-            # pattern = re.compile(r'(\!\[\]\([^)]+)\?[^)]*\)')
-            # messages[-1]['content'] = pattern.sub(r'\1)', messages[-1]['content'])
+            messages[-1]['content'] = remove_SAS_from_image_link(messages[-1]['content'])
             await cosmos_conversation_client.create_message(
                 uuid=messages[-1]["id"],
                 conversation_id=conversation_id,
