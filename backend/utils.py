@@ -110,7 +110,7 @@ def remove_SAS_token(url):
 
 def append_SAS_to_image_link(content):
     # pattern = r'!\[formula\]\((https://[^)]+)\)'
-    pattern = r'!\[[^\]]*\]\ ((https://[^)]+)\?\w+\))'
+    pattern = r'!\[[^\]]*\]\((https://[^)]+)\?\w+\))'
     def url_replacer(match):
         original_url = match.group(2)
         generated_string = generate_SAS(original_url)
@@ -121,7 +121,7 @@ def append_SAS_to_image_link(content):
 
 def remove_SAS_from_image_link(content):
     # pattern = r'!\[formula\]\((https://[^)]+)\)'
-    pattern = r'!\[[^\]]*\]\ ((https://[^)]+)\?\w+\))'
+    pattern = r'!\[[^\]]*\]\((https://[^)]+)\?\w+\))'
     def url_replacer(match):
         url = match.group(2)
         original_url = remove_SAS_token(url)
