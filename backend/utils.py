@@ -109,23 +109,21 @@ def remove_SAS_token(url):
     return url_without_query
 
 def append_SAS_to_image_link(content):
-    pattern = r'!\[\]\((https://[^)]+)\)'
-    # pattern = r'!\[[^\]]*\]\((https://[^)]+)\?\w+\))'
+    # pattern = r'!\[[^)]+)]\((https://[^)]+)\)'
+    pattern = r'!\[(.*?)\]\((.*?)\)'
     def url_replacer(match):
-        original_url = match.group(1)
+        original_url = match.group(2)
         generated_string = generate_SAS(original_url)
-        new_url = f"{original_url}?{generated_string}"
-        return f"![formula]({new_url})"
+        return f"![{match.group(1)}]({original_url}?{generated_string})"
     replaced_text = re.sub(pattern, url_replacer, content)
     return replaced_text
 
-def remove_SAS_from_image_link(content):
-    pattern = r'!\[\]\((https://[^)]+)\)'
-    # pattern = r'!\[[^\]]*\]\((https://[^)]+)\?\w+\))'
+def remove_SAS_from_image_link(content):    
+    pattern = r'!\[(.*?)\]\((.*?)\)'
     def url_replacer(match):
-        url = match.group(1)
-        original_url = remove_SAS_token(url)
-        return f"![formula]({original_url})"
+        original_url = match.group(2)
+        url_cleaned = remove_SAS_token(original_url)
+        return f"![{match.group(1)}]({url_cleaned})"
     replaced_text = re.sub(pattern, url_replacer, content)
     return replaced_text
 
