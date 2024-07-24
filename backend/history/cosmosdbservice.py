@@ -4,7 +4,6 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos import exceptions
 import json
 from backend.utils import (
-    append_SAS_to_image_link,
     generate_SAS
 )
   
@@ -188,8 +187,6 @@ class CosmosConversationClient():
                 for i, chunk in enumerate(content["citations"]):
                     content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
                 item["content"] = json.dumps(content)
-            if item["role"]=="assistant":
-                item["content"] = append_SAS_to_image_link(item["content"])
             messages.append(item)
 
         return messages
