@@ -1604,7 +1604,7 @@ async def get_formula():
                     "warnings": None
                 }
                 id+=1
-                array.append(output)
+                array.append(output) 
         response = jsonify({"values":array})
         return response, 200  # Status code should be 200 for success
 
