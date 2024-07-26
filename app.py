@@ -19,7 +19,7 @@ from quart import (
     render_template,
 )
 
-from PIL import Image
+# from PIL import Image
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
 from math import sqrt
