@@ -558,6 +558,7 @@ const Chat = () => {
     }, [appStateContext?.state.currentChat]);
 
     useLayoutEffect(() => {
+        console.log(processMessages)
         console.log("560 SAVING MESSAGE")
         const saveToDB = async (messages: ChatMessage[], id: string) => {
             console.log("562 SAVING MESSAGE")
@@ -566,14 +567,19 @@ const Chat = () => {
         }
 
         if (appStateContext && appStateContext.state.currentChat && processMessages === messageStatus.Done) {
+            console.log("570 isCosmosDBAvailable")
             if (appStateContext.state.isCosmosDBAvailable.cosmosDB) {
                 if (!appStateContext?.state.currentChat?.messages) {
                     console.error("Failure fetching current chat state.")
                     return
                 }
+                console.log("576 prior noContentError")
                 const noContentError = appStateContext.state.currentChat.messages.find(m => m.role === ERROR)
-                
+                console.log("578 noContentError")
+                console.log(noContentError)
+                console.log("580 NO_CONTENT_ERROR "+NO_CONTENT_ERROR)
                 if (!noContentError?.content.includes(NO_CONTENT_ERROR)) {
+                    console.log("582 saveToDB")
                     saveToDB(appStateContext.state.currentChat.messages, appStateContext.state.currentChat.id)
                         .then((res) => {
                             if (!res.ok) {
@@ -611,6 +617,7 @@ const Chat = () => {
             setMessages(appStateContext.state.currentChat.messages)
             console.log("setProcessMessages(messageStatus.NotRunning)")
             setProcessMessages(messageStatus.NotRunning)
+            console.log(processMessages)
         }
     }, [processMessages]);
 
