@@ -109,7 +109,6 @@ def remove_SAS_token(url):
     return url_without_query
 
 def append_SAS_to_image_link(content):
-    # pattern = r'!\[[^)]+)]\((https://[^)]+)\)'
     pattern = r'!\[(.*?)\]\((.*?)\)'
     def url_replacer(match):
         original_url = match.group(2)

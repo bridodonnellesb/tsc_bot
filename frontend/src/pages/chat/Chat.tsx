@@ -198,7 +198,10 @@ const Chat = () => {
                 const reader = response.body.getReader();
 
                 let runningText = "";
+                
+                console.log("Prior to Process Message")
                 while (true) {
+                    console.log("Process Messsage Update")
                     setProcessMessages(messageStatus.Processing)
                     const { done, value } = await reader.read();
                     if (done) break;
@@ -268,6 +271,7 @@ const Chat = () => {
             setIsLoading(false);
             setShowLoadingMessage(false);
             abortFuncs.current = abortFuncs.current.filter(a => a !== abortController);
+            console.log("setProcessMessages(messageStatus.Done)")
             setProcessMessages(messageStatus.Done)
         }
 
@@ -348,7 +352,9 @@ const Chat = () => {
                 const reader = response.body.getReader();
 
                 let runningText = "";
+                console.log("Prior to setProcessMessages(messageStatus.Processing)")
                 while (true) {
+                    console.log("setProcessMessages(messageStatus.Processing)")
                     setProcessMessages(messageStatus.Processing)
                     const { done, value } = await reader.read();
                     if (done) break;
@@ -493,6 +499,7 @@ const Chat = () => {
             setIsLoading(false);
             setShowLoadingMessage(false);
             abortFuncs.current = abortFuncs.current.filter(a => a !== abortController);
+            console.log("502 setProcessMessages(messageStatus.Done)")
             setProcessMessages(messageStatus.Done)
         }
         return abortController.abort();
@@ -521,11 +528,13 @@ const Chat = () => {
     };
 
     const newChat = () => {
+        console.log("531 Done")
         setProcessMessages(messageStatus.Processing)
         setMessages([])
         setIsCitationPanelOpen(false);
         setActiveCitation(undefined);
         appStateContext?.dispatch({ type: 'UPDATE_CURRENT_CHAT', payload: null });
+        console.log("537 Done")
         setProcessMessages(messageStatus.Done)
     };
 
@@ -549,6 +558,7 @@ const Chat = () => {
 
     useLayoutEffect(() => {
         const saveToDB = async (messages: ChatMessage[], id: string) => {
+            console.log("SAVING MESSAGE")
             const response = await historyUpdate(messages, id)
             return response
         }
@@ -597,6 +607,7 @@ const Chat = () => {
             }
             appStateContext?.dispatch({ type: 'UPDATE_CHAT_HISTORY', payload: appStateContext.state.currentChat });
             setMessages(appStateContext.state.currentChat.messages)
+            console.log("setProcessMessages(messageStatus.NotRunning)")
             setProcessMessages(messageStatus.NotRunning)
         }
     }, [processMessages]);
