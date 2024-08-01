@@ -501,6 +501,7 @@ const Chat = () => {
             abortFuncs.current = abortFuncs.current.filter(a => a !== abortController);
             console.log("502 setProcessMessages(messageStatus.Done)")
             setProcessMessages(messageStatus.Done)
+            console.log(processMessages)
         }
         return abortController.abort();
 
@@ -557,8 +558,9 @@ const Chat = () => {
     }, [appStateContext?.state.currentChat]);
 
     useLayoutEffect(() => {
+        console.log("560 SAVING MESSAGE")
         const saveToDB = async (messages: ChatMessage[], id: string) => {
-            console.log("SAVING MESSAGE")
+            console.log("562 SAVING MESSAGE")
             const response = await historyUpdate(messages, id)
             return response
         }
