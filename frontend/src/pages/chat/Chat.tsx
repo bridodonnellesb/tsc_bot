@@ -199,9 +199,7 @@ const Chat = () => {
 
                 let runningText = "";
                 while (true) {
-                    console.log("202 withoutCosmosDB process message: "+processMessages)
                     setProcessMessages(messageStatus.Processing)
-                    console.log("204 withoutCosmosDB process message: "+processMessages)
                     const { done, value } = await reader.read();
                     if (done) break;
 
@@ -351,9 +349,7 @@ const Chat = () => {
 
                 let runningText = "";
                 while (true) {
-                    console.log("356 withCosmosDB process message: "+processMessages)
                     setProcessMessages(messageStatus.Processing)
-                    console.log("358 withCosmosDB process message: "+processMessages)
                     const { done, value } = await reader.read();
                     if (done) break;
 
@@ -497,9 +493,7 @@ const Chat = () => {
             setIsLoading(false);
             setShowLoadingMessage(false);
             abortFuncs.current = abortFuncs.current.filter(a => a !== abortController);
-            console.log("502 Process Message: "+processMessages)
             setProcessMessages(messageStatus.Done)
-            console.log("504 Process Message: "+processMessages)
         }
         return abortController.abort();
 
@@ -527,16 +521,12 @@ const Chat = () => {
     };
 
     const newChat = () => {
-        console.log("530 New Chat Process Message: "+processMessages)
         setProcessMessages(messageStatus.Processing)
-        console.log("532 New Chat Process Message: "+processMessages)
         setMessages([])
         setIsCitationPanelOpen(false);
         setActiveCitation(undefined);
         appStateContext?.dispatch({ type: 'UPDATE_CURRENT_CHAT', payload: null });
-        console.log("537 New Chat Process Message: "+processMessages)
         setProcessMessages(messageStatus.NotRunning)
-        console.log("539 New Chat Process Message: "+processMessages)
     };
 
     const stopGenerating = () => {
@@ -559,12 +549,9 @@ const Chat = () => {
 
     useLayoutEffect(() => {
         const saveToDB = async (messages: ChatMessage[], id: string) => {
-            console.log("563 saveToDB triggered successfully")
             const response = await historyUpdate(messages, id)
             return response
         }
-        console.log("appStateContext "+appStateContext)
-        console.log("processMessages "+processMessages)
         if (appStateContext && appStateContext.state.currentChat && processMessages === messageStatus.Done) {
             if (appStateContext.state.isCosmosDBAvailable.cosmosDB) {
                 if (!appStateContext?.state.currentChat?.messages) {
@@ -608,9 +595,7 @@ const Chat = () => {
             }
             appStateContext?.dispatch({ type: 'UPDATE_CHAT_HISTORY', payload: appStateContext.state.currentChat });
             setMessages(appStateContext.state.currentChat.messages)
-            console.log("611 Process Message: "+processMessages)
             setProcessMessages(messageStatus.NotRunning)
-            console.log("613 Process Message: "+processMessages)
         }
     }, [processMessages]);
 
