@@ -127,7 +127,6 @@ export const historyGenerate = async (options: ConversationRequest, abortSignal:
         body: body,
         signal: abortSignal
     }).then((res) => {
-        console.log(res)
         return res
     })
     .catch((err) => {
