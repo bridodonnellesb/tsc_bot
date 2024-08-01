@@ -198,11 +198,10 @@ const Chat = () => {
                 const reader = response.body.getReader();
 
                 let runningText = "";
-                
-                console.log("Prior to Process Message")
                 while (true) {
-                    console.log("Process Messsage Update")
+                    console.log("202 withoutCosmosDB process message: "+processMessages)
                     setProcessMessages(messageStatus.Processing)
+                    console.log("204 withoutCosmosDB process message: "+processMessages)
                     const { done, value } = await reader.read();
                     if (done) break;
 
@@ -271,8 +270,9 @@ const Chat = () => {
             setIsLoading(false);
             setShowLoadingMessage(false);
             abortFuncs.current = abortFuncs.current.filter(a => a !== abortController);
-            console.log("setProcessMessages(messageStatus.Done)")
+            console.log("273 finally withoutCosmosDB process message: "+processMessages)
             setProcessMessages(messageStatus.Done)
+            console.log("275 finally withoutCosmosDB process message: "+processMessages)
         }
 
         return abortController.abort();
@@ -352,10 +352,10 @@ const Chat = () => {
                 const reader = response.body.getReader();
 
                 let runningText = "";
-                console.log("Prior to setProcessMessages(messageStatus.Processing)")
                 while (true) {
-                    console.log("setProcessMessages(messageStatus.Processing)")
+                    console.log("356 withCosmosDB process message: "+processMessages)
                     setProcessMessages(messageStatus.Processing)
+                    console.log("358 withCosmosDB process message: "+processMessages)
                     const { done, value } = await reader.read();
                     if (done) break;
 
@@ -499,9 +499,9 @@ const Chat = () => {
             setIsLoading(false);
             setShowLoadingMessage(false);
             abortFuncs.current = abortFuncs.current.filter(a => a !== abortController);
-            console.log("502 setProcessMessages(messageStatus.Done)")
+            console.log("502 Process Message: "+processMessages)
             setProcessMessages(messageStatus.Done)
-            console.log(processMessages)
+            console.log("504 Process Message: "+processMessages)
         }
         return abortController.abort();
 
@@ -529,14 +529,16 @@ const Chat = () => {
     };
 
     const newChat = () => {
-        console.log("531 Done")
+        console.log("532 New Chat Process Message: "+processMessages)
         setProcessMessages(messageStatus.Processing)
+        console.log("534 New Chat Process Message: "+processMessages)
         setMessages([])
         setIsCitationPanelOpen(false);
         setActiveCitation(undefined);
         appStateContext?.dispatch({ type: 'UPDATE_CURRENT_CHAT', payload: null });
-        console.log("537 Done")
+        console.log("539 New Chat Process Message: "+processMessages)
         setProcessMessages(messageStatus.Done)
+        console.log("541 New Chat Process Message: "+processMessages)
     };
 
     const stopGenerating = () => {
@@ -615,9 +617,9 @@ const Chat = () => {
             }
             appStateContext?.dispatch({ type: 'UPDATE_CHAT_HISTORY', payload: appStateContext.state.currentChat });
             setMessages(appStateContext.state.currentChat.messages)
-            console.log("setProcessMessages(messageStatus.NotRunning)")
+            console.log("620 Process Message: "+processMessages)
             setProcessMessages(messageStatus.NotRunning)
-            console.log(processMessages)
+            console.log("622 Process Message: "+processMessages)
         }
     }, [processMessages]);
 
