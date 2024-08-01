@@ -535,7 +535,7 @@ const Chat = () => {
         setActiveCitation(undefined);
         appStateContext?.dispatch({ type: 'UPDATE_CURRENT_CHAT', payload: null });
         console.log("537 New Chat Process Message: "+processMessages)
-        setProcessMessages(messageStatus.Done)
+        setProcessMessages(messageStatus.NotRunning)
         console.log("539 New Chat Process Message: "+processMessages)
     };
 
