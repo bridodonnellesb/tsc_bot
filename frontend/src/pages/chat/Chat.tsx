@@ -270,9 +270,7 @@ const Chat = () => {
             setIsLoading(false);
             setShowLoadingMessage(false);
             abortFuncs.current = abortFuncs.current.filter(a => a !== abortController);
-            console.log("273 finally withoutCosmosDB process message: "+processMessages)
             setProcessMessages(messageStatus.Done)
-            console.log("275 finally withoutCosmosDB process message: "+processMessages)
         }
 
         return abortController.abort();
@@ -529,16 +527,16 @@ const Chat = () => {
     };
 
     const newChat = () => {
-        console.log("532 New Chat Process Message: "+processMessages)
+        console.log("530 New Chat Process Message: "+processMessages)
         setProcessMessages(messageStatus.Processing)
-        console.log("534 New Chat Process Message: "+processMessages)
+        console.log("532 New Chat Process Message: "+processMessages)
         setMessages([])
         setIsCitationPanelOpen(false);
         setActiveCitation(undefined);
         appStateContext?.dispatch({ type: 'UPDATE_CURRENT_CHAT', payload: null });
-        console.log("539 New Chat Process Message: "+processMessages)
+        console.log("537 New Chat Process Message: "+processMessages)
         setProcessMessages(messageStatus.Done)
-        console.log("541 New Chat Process Message: "+processMessages)
+        console.log("539 New Chat Process Message: "+processMessages)
     };
 
     const stopGenerating = () => {
@@ -560,28 +558,21 @@ const Chat = () => {
     }, [appStateContext?.state.currentChat]);
 
     useLayoutEffect(() => {
-        console.log(processMessages)
-        console.log("560 SAVING MESSAGE")
+        console.log("561 process message: "+processMessages)
         const saveToDB = async (messages: ChatMessage[], id: string) => {
-            console.log("562 SAVING MESSAGE")
+            console.log("563 saveToDB triggered successfully")
             const response = await historyUpdate(messages, id)
             return response
         }
 
         if (appStateContext && appStateContext.state.currentChat && processMessages === messageStatus.Done) {
-            console.log("570 isCosmosDBAvailable")
             if (appStateContext.state.isCosmosDBAvailable.cosmosDB) {
                 if (!appStateContext?.state.currentChat?.messages) {
                     console.error("Failure fetching current chat state.")
                     return
                 }
-                console.log("576 prior noContentError")
                 const noContentError = appStateContext.state.currentChat.messages.find(m => m.role === ERROR)
-                console.log("578 noContentError")
-                console.log(noContentError)
-                console.log("580 NO_CONTENT_ERROR "+NO_CONTENT_ERROR)
                 if (!noContentError?.content.includes(NO_CONTENT_ERROR)) {
-                    console.log("582 saveToDB")
                     saveToDB(appStateContext.state.currentChat.messages, appStateContext.state.currentChat.id)
                         .then((res) => {
                             if (!res.ok) {
@@ -617,9 +608,9 @@ const Chat = () => {
             }
             appStateContext?.dispatch({ type: 'UPDATE_CHAT_HISTORY', payload: appStateContext.state.currentChat });
             setMessages(appStateContext.state.currentChat.messages)
-            console.log("620 Process Message: "+processMessages)
+            console.log("611 Process Message: "+processMessages)
             setProcessMessages(messageStatus.NotRunning)
-            console.log("622 Process Message: "+processMessages)
+            console.log("613 Process Message: "+processMessages)
         }
     }, [processMessages]);
 
