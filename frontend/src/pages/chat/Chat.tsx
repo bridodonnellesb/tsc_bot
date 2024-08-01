@@ -558,13 +558,13 @@ const Chat = () => {
     }, [appStateContext?.state.currentChat]);
 
     useLayoutEffect(() => {
-        console.log("561 process message: "+processMessages)
         const saveToDB = async (messages: ChatMessage[], id: string) => {
             console.log("563 saveToDB triggered successfully")
             const response = await historyUpdate(messages, id)
             return response
         }
-
+        console.log("appStateContext "+appStateContext)
+        console.log("processMessages "+processMessages)
         if (appStateContext && appStateContext.state.currentChat && processMessages === messageStatus.Done) {
             if (appStateContext.state.isCosmosDBAvailable.cosmosDB) {
                 if (!appStateContext?.state.currentChat?.messages) {
