@@ -36,11 +36,11 @@ export function parseAnswer(answer: AskResponse): ParsedAnswer {
             answerText = answerText.replaceAll(link, ` ^${++citationReindex}^ `);
             citation.id = citationIndex;
             citation.reindex_id = citationReindex.toString();
-            // let content = citation.content.split("\n")
-            // citation.content = content[0]
-            // let pages = content[1].replace("[","").replace("[","").split(",")
-            // let pageNumber = citation.filepath ? citation.filepath.match(/\d+$/) : null;
-            // citation.page = pageNumber ? pages[(parseInt(pageNumber[0], 10))].toString() : null;
+            let content = citation.content.split("\n")
+            citation.content = content[0]
+            let pages = content[1].replace("[","").replace("[","").split(",")
+            let pageNumber = citation.filepath ? citation.filepath.match(/\d+$/) : null;
+            citation.page = pageNumber ? pages[(parseInt(pageNumber[0], 10))].toString() : null;
             filteredCitations.push(citation);
         }
     })
