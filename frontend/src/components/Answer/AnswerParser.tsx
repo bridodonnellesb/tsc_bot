@@ -37,8 +37,11 @@ export function parseAnswer(answer: AskResponse): ParsedAnswer {
             citation.id = citationIndex;
             citation.reindex_id = citationReindex.toString();
             let content = citation.content.split("\n")
+            console.log("content array "+content)
+            console.log("citation "+content[0])
+            console.log("page "+content[1])
             citation.content = content[0]
-            let pages = content[1].replace("[","").replace("[","").split(",")
+            let pages = content[1].replace("[","").replace("]","").split(",")
             let pageNumber = citation.filepath ? citation.filepath.match(/\d+$/) : null;
             citation.page = pageNumber ? pages[(parseInt(pageNumber[0], 10))].toString() : null;
             filteredCitations.push(citation);
