@@ -39,9 +39,7 @@ export function parseAnswer(answer: AskResponse): ParsedAnswer {
             let content = citation.content.split("\n")
             citation.content = content[0]
             if (content.length > 1) {
-                let pages = content[1].replace("[", "").replace("]", "").split(",");
-                let pageNumber = citation.filepath ? citation.filepath.match(/\d+$/) : null;
-                citation.page = pageNumber ? pages[(parseInt(pageNumber[0], 10))].toString() : null;
+                citation.page = content[1]
             } else {
                 citation.page = "1";
             }
