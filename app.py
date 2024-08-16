@@ -81,7 +81,7 @@ def create_app():
 
 @bp.route("/")
 async def index():
-    return await render_template("index.html", title=UI_TITLE, icon=(UI_LOGO or './assets/Contoso-ff70ad88.svg'), favicon=UI_FAVICON)
+    return await render_template("index.html", title=UI_TITLE, icon=UI_FAVICON)
 
 
 @bp.route("/favicon.ico")
