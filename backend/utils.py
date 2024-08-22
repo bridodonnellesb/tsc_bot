@@ -80,28 +80,34 @@ def generateFilterString(userToken):
 
 def generate_SAS(url):
     container, blob = split_url(url)
-    blob_service_client =BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
-    blob_client = blob_service_client.get_blob_client(container=container, blob=blob)
+    if container is None or blob is None:
+        return ""
+    else:
+        blob_service_client =BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
+        blob_client = blob_service_client.get_blob_client(container=container, blob=blob)
 
-    sas_token_expiry_time = datetime.utcnow() + timedelta(hours=1)  # 1 hour from now
+        sas_token_expiry_time = datetime.utcnow() + timedelta(hours=1)  # 1 hour from now
 
-    sas_token = generate_blob_sas(
-        account_name=blob_client.account_name,
-        container_name=blob_client.container_name,
-        blob_name=blob_client.blob_name,
-        account_key=BLOB_CREDENTIAL,
-        permission=BlobSasPermissions(read=True),
-        expiry=sas_token_expiry_time
-    )
+        sas_token = generate_blob_sas(
+            account_name=blob_client.account_name,
+            container_name=blob_client.container_name,
+            blob_name=blob_client.blob_name,
+            account_key=BLOB_CREDENTIAL,
+            permission=BlobSasPermissions(read=True),
+            expiry=sas_token_expiry_time
+        )
 
-    return sas_token
+        return sas_token
 
 def split_url(url):
     pattern = fr'{BLOB_ACCOUNT}/([\w-]+)/([\w-]+\.\w+)'
     match = re.search(pattern, url)
-    container = match.group(1)
-    blob = match.group(2)
-    return container, blob
+    if match:
+        container = match.group(1)
+        blob = match.group(2)
+        return container, blob
+    else:
+        return None, None
 
 def remove_SAS_token(url):
     parsed_url = urlparse(url)
