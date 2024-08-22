@@ -5,7 +5,7 @@ import requests
 import dataclasses
 from datetime import datetime, timedelta
 import re
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
 
 DEBUG = os.environ.get("DEBUG", "false")
@@ -100,6 +100,9 @@ def generate_SAS(url):
         return sas_token
 
 def split_url(url):
+    url_decoded = unquote(url)
+    if url_decoded.endswith('/'):
+        url_decoded = url_decoded[:-1]
     pattern = fr'{BLOB_ACCOUNT}/([\w-]+)/([\w-]+\.\w+)'
     match = re.search(pattern, url)
     if match:
