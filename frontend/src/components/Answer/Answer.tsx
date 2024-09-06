@@ -183,19 +183,19 @@ export const Answer = ({
     }
 
     const components = {
-        code({node, ...props}: {node: any, [key: string]: any}) {
-            let language;
-            if (props.className) {
-                const match = props.className.match(/language-(\w+)/);
-                language = match ? match[1] : undefined;
-            }
-            const codeString = node.children[0].value ?? '';
-            return (
-                <SyntaxHighlighter style={nord} language={language} PreTag="div" {...props}>
-                    {codeString}
-                </SyntaxHighlighter>
-            );
-        },
+        // code({node, ...props}: {node: any, [key: string]: any}) {
+        //     let language;
+        //     if (props.className) {
+        //         const match = props.className.match(/language-(\w+)/);
+        //         language = match ? match[1] : undefined;
+        //     }
+        //     const codeString = node.children[0].value ?? '';
+        //     return (
+        //         <SyntaxHighlighter style={nord} language={language} PreTag="div" {...props}>
+        //             {codeString}
+        //         </SyntaxHighlighter>
+        //     );
+        // },
         // img({node, ...props}) {
         //     // You can add custom styling or attributes here
         //     return <img style={{ maxWidth: '100%' }} {...props} />;
