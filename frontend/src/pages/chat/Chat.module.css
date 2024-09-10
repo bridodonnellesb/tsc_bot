@@ -296,6 +296,11 @@ a {
     cursor: pointer;
 }
 
+.iframe {
+    transform: scale(1);
+    transform-origin: 0 0;
+}
+
 @media (max-width: 480px) {
     .chatInput {
         width: 90%;
