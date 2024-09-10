@@ -777,9 +777,7 @@ const Chat = () => {
                                 <IconButton iconProps={{ iconName: 'Cancel' }} aria-label="Close citations panel" onClick={() => setIsCitationPanelOpen(false)} />
                             </Stack>
                             <h5 className={styles.citationPanelTitle} tabIndex={0} title={activeCitation.url ? activeCitation.url : activeCitation.title ?? ""} onClick={() => onViewSource(activeCitation)}>{activeCitation.title}</h5>
-                            <div className={styles.iframe}>
-                                <iframe key={iframeState} src={activeCitation.url+"#page="+activeCitation.page} width="100%" height="100%"></iframe>
-                            </div>
+                            <iframe className={styles.iframe} key={iframeState} src={activeCitation.url+"#page="+activeCitation.page} width="100%" height="100%"></iframe>
                             {/* <div tabIndex={0}>
                                 <ReactMarkdown
                                     linkTarget="_blank"

@@ -297,7 +297,8 @@ a {
 }
 
 .iframe {
-    position:relative;
+    transform: scale(1);
+    transform-origin: 0 0;
 }
 
 @media (max-width: 480px) {
