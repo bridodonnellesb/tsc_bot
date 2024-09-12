@@ -184,6 +184,16 @@ sup {
     line-height: 10px;
 }
 
+.copyButton {
+    color: #D1D1D1;
+}
+
+.copyButton:hover {
+    cursor: pointer;
+    background: #424242;
+}
+
+
 @media (max-width: 480px) {
     .answerFooter {
         flex-direction: column-reverse;
