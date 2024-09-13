@@ -185,12 +185,13 @@ sup {
 }
 
 .copyButton {
-    color: #D1D1D1;
+    color: slategray;
 }
 
 .copyButton:hover {
     cursor: pointer;
-    background: #424242;
+    color: #ffffff;
+    background: #0e2b45;
 }
 
 .copyButtonText {
@@ -200,7 +201,7 @@ sup {
     line-height: 20px;
     display: flex;
     align-items: center;
-    color: #D1D1D1;
+    color: #ffffff;
 }
 
 @media (max-width: 480px) {
