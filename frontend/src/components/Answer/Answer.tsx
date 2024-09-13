@@ -14,7 +14,7 @@ import remarkGfm from "remark-gfm";
 import supersub from 'remark-supersub'
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { ThumbDislike20Filled, ThumbLike20Filled, CopyFilled } from "@fluentui/react-icons";
+import { ThumbDislike20Filled, ThumbLike20Filled, Copy20Regular } from "@fluentui/react-icons";
 import { XSSAllowTags } from "../../constants/xssAllowTags";
 
 interface Props {
@@ -186,6 +186,9 @@ export const Answer = ({
     const handleCopyMessageClick = () => {
         navigator.clipboard.writeText(parsedAnswer.markdownFormatText);
         setCopyMessageClicked(true);
+        setTimeout(() => {
+            setCopyMessageClicked(false);
+        }, 2000);
     };
 
     const components = {
@@ -224,9 +227,10 @@ export const Answer = ({
                         </Stack.Item>
                         <Stack.Item className={styles.answerHeader}>
                             {FEEDBACK_ENABLED && answer.message_id !== undefined && <Stack horizontal horizontalAlign="space-between">
-                                <CopyFilled 
+                                {copyMessageClicked && <span className={styles.copyButtonText}>Copied</span>}
+                                <Copy20Regular
                                     aria-label="Copy"
-                                    className={styles.copyButton} 
+                                    className={styles.copyButton}
                                     onClick={handleCopyMessageClick}
                                 />
                                 <ThumbLike20Filled
