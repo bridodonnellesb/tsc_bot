@@ -5,6 +5,9 @@ import he from "he";
 export type ParsedAnswer = {
     citations: Citation[];
     markdownFormatText: string;
+    // types_filter: string[];
+    // rules_filter: string[];
+    // parts_filter: string[];
 };
 
 export const enumerateCitations = (citations: Citation[]) => {
@@ -23,6 +26,10 @@ export const enumerateCitations = (citations: Citation[]) => {
 
 export function parseAnswer(answer: AskResponse): ParsedAnswer {
     let answerText = answer.answer;
+    // let answerTypes = answer.types_filter || [];
+    // let answerRules = answer.rules_filter || [];
+    // let answerParts = answer.parts_filter || [];
+
     const citationLinks = answerText.match(/\[(doc\d\d?\d?)]/g);
 
     const lengthDocN = "[doc".length;
@@ -43,8 +50,12 @@ export function parseAnswer(answer: AskResponse): ParsedAnswer {
             citation.content = content[0]
             if (content.length > 1) {
                 citation.page = content[1]
+                citation.release_date = content[2]
+                citation.version = content[3]
             } else {
                 citation.page = "1";
+                citation.release_date = "NA"
+                citation.version = "NA"
             }
             filteredCitations.push(citation);
         }
@@ -54,6 +65,9 @@ export function parseAnswer(answer: AskResponse): ParsedAnswer {
 
     return {
         citations: filteredCitations,
-        markdownFormatText: answerText
+        markdownFormatText: answerText,
+        // types_filter: answerTypes,
+        // rules_filter: answerRules,
+        // parts_filter: answerParts
     };
 }

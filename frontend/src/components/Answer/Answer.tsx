@@ -87,7 +87,7 @@ export const Answer = ({
         // }
         // else {
         if (citation.filepath) {
-            citationFilename = `${citation.title} - Part ${index}`;
+            citationFilename = `${citation.title} (Release Date: ${citation.release_date} | Version ${citation.version}) - Part ${index}`;
         }
         return citationFilename;
     }
@@ -183,6 +183,7 @@ export const Answer = ({
         );
     }
 
+
     const handleCopyMessageClick = () => {
         navigator.clipboard.writeText(parsedAnswer.markdownFormatText);
         setCopyMessageClicked(true);
@@ -209,7 +210,8 @@ export const Answer = ({
         //     // You can add custom styling or attributes here
         //     return <img style={{ maxWidth: '100%' }} {...props} />;
         // },
-    };
+    }
+
     return (
         <>
             <Stack className={styles.answerContainer} tabIndex={0}>
@@ -285,6 +287,11 @@ export const Answer = ({
                 {chevronIsExpanded &&
                     <div className={styles.citationWrapper} >
                         {parsedAnswer.citations.map((citation, idx) => {
+                            // const filterDescription = getActiveFiltersDescription(
+                            //     parsedAnswer.types_filter,
+                            //     parsedAnswer.rules_filter,
+                            //     parsedAnswer.parts_filter
+                            // );
                             return (
                                 <span 
                                     title={createCitationFilepath(citation, ++idx)} 
@@ -299,6 +306,7 @@ export const Answer = ({
                                     <div className={styles.citation}>{idx}</div>
                                     {createCitationFilepath(citation, idx, true)}
                                 </span>);
+                                // <div className={styles.filterDescription}>{filterDescription}</div>
                         })}
                     </div>
                 }

@@ -255,6 +255,14 @@
     margin-bottom: 12px;
 } 
 
+.citationPanelText {
+    font-style: italic;
+    font-weight: 300;
+    font-size: 10px;
+    line-height: 14px;
+    color: #323130;
+}
+
 .citationPanelTitle:hover {
     text-decoration: underline;
     cursor: pointer;

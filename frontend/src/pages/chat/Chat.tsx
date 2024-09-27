@@ -44,7 +44,9 @@ const enum messageStatus {
 const Chat = () => {
     const appStateContext = useContext(AppStateContext)
     const ui = appStateContext?.state.frontendSettings?.ui;
-    const filters = appStateContext?.state.selectedOptions;
+    // const typesFilter = appStateContext?.state.selectedTypes;
+    // const rulesFilters = appStateContext?.state.selectedRules;
+    // const partsFilter = appStateContext?.state.selectedParts;
     const AUTH_ENABLED = appStateContext?.state.frontendSettings?.auth_enabled;
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -160,7 +162,9 @@ const Chat = () => {
             role: "user",
             content: question,
             date: new Date().toISOString(),
-            filter: filters
+            // types_filter: typesFilter,
+            // rules_filter: rulesFilters,
+            // parts_filter: partsFilter  
         };
 
         let conversation: Conversation | null | undefined;
@@ -285,7 +289,9 @@ const Chat = () => {
             role: "user",
             content: question,
             date: new Date().toISOString(),
-            filter: filters
+            // types_filter: typesFilter,
+            // rules_filter: rulesFilters,
+            // parts_filter: partsFilter  
         };
         //api call params set here (generate)
         let request: ConversationRequest;
@@ -677,7 +683,10 @@ const Chat = () => {
                                                         answer: answer.content,
                                                         citations: parseCitationFromMessage(messages[index - 1]),
                                                         message_id: answer.id,
-                                                        feedback: answer.feedback
+                                                        feedback: answer.feedback,
+                                                        // types_filter: answer .types_filter,
+                                                        // rules_filter: answer.rules_filter,
+                                                        // parts_filter: answer.parts_filter
                                                     }}
                                                     onCitationClicked={c => onShowCitation(c)}
                                                 />
@@ -777,6 +786,7 @@ const Chat = () => {
                                 <IconButton iconProps={{ iconName: 'Cancel' }} aria-label="Close citations panel" onClick={() => setIsCitationPanelOpen(false)} />
                             </Stack>
                             <h5 className={styles.citationPanelTitle} tabIndex={0} title={activeCitation.url ? activeCitation.url : activeCitation.title ?? ""} onClick={() => onViewSource(activeCitation)}>{activeCitation.title}</h5>
+                            <p className={styles.citationPanelText}>Release Date: {activeCitation.release_date} | Version: {activeCitation.version}</p>
                             <iframe key={iframeState} src={activeCitation.url+"#page="+activeCitation.page+"&zoom=50"} width="100%" height="100%"></iframe>
                             {/* <div tabIndex={0}>
                                 <ReactMarkdown

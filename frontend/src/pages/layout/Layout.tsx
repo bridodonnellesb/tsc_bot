@@ -64,34 +64,91 @@ const Layout = () => {
         return () => window.removeEventListener('resize', handleResize);
       }, []);
 
-    const dropdownOptions = [
-        { key: 'CRM7', text: 'CRM7' },
-        { key: 'SRP', text: 'SRP' },
-        { key: 'IRP', text: 'IRP' }
-    ];
+    // const typeDropdownOptions = [
+    //     { key: 'Code', text: 'Code' },
+    //     { key: 'Agreed Procedure', text: 'Agreed Procedure' },
+    //     { key: 'Appendice', text: 'Appendice' },
+    //     { key: 'Glossary', text: 'Glossary' },
+    //     { key: 'Training Materials', text: 'Training Materials' },
+    // ];
+    
+    // const rulesDropdownOptions = [
+    //     { key: 'Trading Settlement Code', text: 'Trading Settlement Code' },
+    //     { key: 'Capacity Market Rules', text: 'Capacity Market Rules' }
+    // ];
+    
+    // const partsDropdownOptions = [
+    //     { key: 'A', text: 'Part A' },
+    //     { key: 'B', text: 'Part B' },
+    //     { key: 'C', text: 'Part C' }
+    // ];     
 
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+    // const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+    // const [selectedRules, setSelectedRules] = useState<string[]>([]);
+    // const [selectedParts, setSelectedParts] = useState<string[]>([]);
 
-    const onDropdownChange = (
-        event: React.FormEvent<HTMLDivElement>,
-        option?: IDropdownOption, // option is now optional and matches IDropdownOption type
-        index?: number // index is optional and of type number
-    ): void => {
-        if (option) {
-            const newSelectedKeys = option.selected
-                ? [...selectedKeys, option.key as string]
-                : selectedKeys.filter(key => key !== option.key);
+    // const onTypesDropdownChange = (
+    //     event: React.FormEvent<HTMLDivElement>,
+    //     option?: IDropdownOption, // option is now optional and matches IDropdownOption type
+    //     index?: number // index is optional and of type number
+    // ): void => {
+    //     if (option) {
+    //         const newSelectedTypes = option.selected
+    //             ? [...selectedTypes, option.key as string]
+    //             : selectedTypes.filter(key => key !== option.key);
 
-            // Update the local state
-            setSelectedKeys(newSelectedKeys);
+    //         // Update the local state
+    //         setSelectedTypes(newSelectedTypes);
 
-            // Dispatch the action to update the AppStateContext
-            appStateContext?.dispatch({
-                type: 'UPDATE_SELECTED_OPTIONS',
-                payload: newSelectedKeys,
-            });
-        }
-    };
+    //         // Dispatch the action to update the AppStateContext
+    //         appStateContext?.dispatch({
+    //             type: 'UPDATE_SELECTED_TYPES',
+    //             payload: newSelectedTypes,
+    //         });
+    //     }
+    // };
+    
+    // const onRulesDropdownChange = (
+    //     event: React.FormEvent<HTMLDivElement>,
+    //     option?: IDropdownOption, // option is now optional and matches IDropdownOption type
+    //     index?: number // index is optional and of type number
+    // ): void => {
+    //     if (option) {
+    //         const newSelectedRules = option.selected
+    //             ? [...selectedRules, option.key as string]
+    //             : selectedRules.filter(key => key !== option.key);
+
+    //         // Update the local state
+    //         setSelectedRules(newSelectedRules);
+
+    //         // Dispatch the action to update the AppStateContext
+    //         appStateContext?.dispatch({
+    //             type: 'UPDATE_SELECTED_RULES',
+    //             payload: newSelectedRules,
+    //         });
+    //     }
+    // };
+
+    // const onPartsDropdownChange = (
+    //     event: React.FormEvent<HTMLDivElement>,
+    //     option?: IDropdownOption, // option is now optional and matches IDropdownOption type
+    //     index?: number // index is optional and of type number
+    // ): void => {
+    //     if (option) {
+    //         const newSelectedParts = option.selected
+    //             ? [...selectedParts, option.key as string]
+    //             : selectedParts.filter(key => key !== option.key);
+
+    //         // Update the local state
+    //         setSelectedParts(newSelectedParts);
+
+    //         // Dispatch the action to update the AppStateContext
+    //         appStateContext?.dispatch({
+    //             type: 'UPDATE_SELECTED_PARTS',
+    //             payload: newSelectedParts,
+    //         });
+    //     }
+    // };
 
     return (
         <div className={styles.layout}>
@@ -108,6 +165,30 @@ const Layout = () => {
                         </Link>
                     </Stack>
                     <Stack horizontal tokens={{ childrenGap: 10 }} className={styles.shareButtonContainer}>
+                        {/* <Dropdown
+                            placeholder="Select Document Type to filter by"
+                            multiSelect
+                            options={typeDropdownOptions}
+                            selectedKeys={selectedTypes}
+                            onChange={onTypesDropdownChange}
+                            styles={{ dropdown: { width: 250 } }} // Adjust width as needed
+                        />
+                        <Dropdown
+                            placeholder="Select Rules Set to filter by"
+                            multiSelect
+                            options={rulesDropdownOptions}
+                            selectedKeys={selectedRules}
+                            onChange={onRulesDropdownChange}
+                            styles={{ dropdown: { width: 250 } }} // Adjust width as needed
+                        />
+                        <Dropdown
+                            placeholder="Select Trading Settle Code Part to filter by"
+                            multiSelect
+                            options={partsDropdownOptions}
+                            selectedKeys={selectedParts}
+                            onChange={onPartsDropdownChange}
+                            styles={{ dropdown: { width: 250 } }} // Adjust width as needed
+                        /> */}
                         {(appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured) &&
                             <HistoryButton onClick={handleHistoryClick} text={appStateContext?.state?.isChatHistoryOpen ? hideHistoryLabel : showHistoryLabel} />
                         }

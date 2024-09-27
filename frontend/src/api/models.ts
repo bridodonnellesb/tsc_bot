@@ -4,6 +4,9 @@ export type AskResponse = {
     error?: string;
     message_id?: string;
     feedback?: Feedback;
+    // types_filter?: string[];
+    // rules_filter?: string[];
+    // parts_filter?: string[];
 };
 
 export type Citation = {
@@ -17,6 +20,8 @@ export type Citation = {
     chunk_id: string | null;
     reindex_id: string | null;
     page: string | null;
+    release_date: string | null;
+    version: string | null;
 }
 
 export type ToolMessageContent = {
@@ -32,7 +37,9 @@ export type ChatMessage = {
     date: string;
     feedback?: Feedback;
     context?: string;
-    filter?: string[];
+    // types_filter?: string[];
+    // rules_filter?: string[];
+    // parts_filter?: string[];
 };
 
 export type Conversation = {
