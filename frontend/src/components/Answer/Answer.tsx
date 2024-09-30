@@ -296,14 +296,14 @@ export const Answer = ({
                                 </span>);
                                 
                         })}
-                        <div className={styles.filterDescription}>
+                        {/* <div className={styles.filterDescription}>
                             <p> Filters test.</p>
-                            {/* { getActiveFiltersDescription(
+                            { getActiveFiltersDescription(
                                 parsedAnswer.types_filter,
                                 parsedAnswer.rules_filter,
                                 parsedAnswer.parts_filter
-                            );} */}
-                        </div>
+                            );} 
+                        </div> */}
                     </div>
                 }
             </Stack>

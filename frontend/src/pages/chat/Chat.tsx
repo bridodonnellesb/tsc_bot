@@ -44,9 +44,9 @@ const enum messageStatus {
 const Chat = () => {
     const appStateContext = useContext(AppStateContext)
     const ui = appStateContext?.state.frontendSettings?.ui;
-    // const typesFilter = appStateContext?.state.selectedTypes;
-    // const rulesFilters = appStateContext?.state.selectedRules;
-    // const partsFilter = appStateContext?.state.selectedParts;
+    const typesFilter = appStateContext?.state.selectedTypes;
+    const rulesFilters = appStateContext?.state.selectedRules;
+    const partsFilter = appStateContext?.state.selectedParts;
     const AUTH_ENABLED = appStateContext?.state.frontendSettings?.auth_enabled;
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -162,9 +162,9 @@ const Chat = () => {
             role: "user",
             content: question,
             date: new Date().toISOString(),
-            // types_filter: typesFilter,
-            // rules_filter: rulesFilters,
-            // parts_filter: partsFilter  
+            types_filter: typesFilter,
+            rules_filter: rulesFilters,
+            parts_filter: partsFilter  
         };
 
         let conversation: Conversation | null | undefined;
@@ -289,9 +289,9 @@ const Chat = () => {
             role: "user",
             content: question,
             date: new Date().toISOString(),
-            // types_filter: typesFilter,
-            // rules_filter: rulesFilters,
-            // parts_filter: partsFilter  
+            types_filter: typesFilter,
+            rules_filter: rulesFilters,
+            parts_filter: partsFilter  
         };
         //api call params set here (generate)
         let request: ConversationRequest;
