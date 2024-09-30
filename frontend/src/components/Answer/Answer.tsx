@@ -183,17 +183,17 @@ export const Answer = ({
         );
     }
 
-    // const getActiveFiltersDescription = (
-    //     typesFilter: string[],
-    //     rulesFilter: string[],
-    //     partsFilter: string[]
-    // ): string => {
-    //     const filters = [];
-    //     if (typesFilter.length > 0) filters.push(`Type: ${typesFilter.join(', ')}`);
-    //     if (rulesFilter.length > 0) filters.push(`Type: ${rulesFilter.join(', ')}`);
-    //     if (partsFilter.length > 0) filters.push(`Type: ${partsFilter.join(', ')}`);
-    //     return filters.length > 0 ? `Filters active: \n${filters.join('; ')}` : 'No filters active';
-    // }
+    const getActiveFiltersDescription = (
+        typesFilter: string[],
+        rulesFilter: string[],
+        partsFilter: string[]
+    ): string => {
+        const filters = [];
+        if (typesFilter.length > 0) filters.push(`Type: ${typesFilter.join(', ')}`);
+        if (rulesFilter.length > 0) filters.push(`Type: ${rulesFilter.join(', ')}`);
+        if (partsFilter.length > 0) filters.push(`Type: ${partsFilter.join(', ')}`);
+        return filters.length > 0 ? `Filters active: \n${filters.join('; ')}` : 'No filters active';
+    }
 
     const handleCopyMessageClick = () => {
         navigator.clipboard.writeText(parsedAnswer.markdownFormatText);
@@ -296,14 +296,13 @@ export const Answer = ({
                                 </span>);
                                 
                         })}
-                        {/* <div className={styles.filterDescription}>
-                            <p> Filters test.</p>
+                        <div className={styles.filterDescription}>
                             { getActiveFiltersDescription(
                                 parsedAnswer.types_filter,
                                 parsedAnswer.rules_filter,
                                 parsedAnswer.parts_filter
-                            );} 
-                        </div> */}
+                            )} 
+                        </div>
                     </div>
                 }
             </Stack>

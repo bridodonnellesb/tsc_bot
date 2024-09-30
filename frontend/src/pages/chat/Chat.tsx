@@ -684,9 +684,9 @@ const Chat = () => {
                                                         citations: parseCitationFromMessage(messages[index - 1]),
                                                         message_id: answer.id,
                                                         feedback: answer.feedback,
-                                                        // types_filter: answer .types_filter,
-                                                        // rules_filter: answer.rules_filter,
-                                                        // parts_filter: answer.parts_filter
+                                                        types_filter: answer .types_filter,
+                                                        rules_filter: answer.rules_filter,
+                                                        parts_filter: answer.parts_filter
                                                     }}
                                                     onCitationClicked={c => onShowCitation(c)}
                                                 />

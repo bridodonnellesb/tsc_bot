@@ -146,6 +146,21 @@
     color: #ffff00;
 }
 
+.filterDescription{
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #ffff00;
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+
 .accordionTitle:hover {
     cursor:pointer;
 }

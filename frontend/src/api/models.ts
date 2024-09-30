@@ -4,9 +4,9 @@ export type AskResponse = {
     error?: string;
     message_id?: string;
     feedback?: Feedback;
-    // types_filter?: string[];
-    // rules_filter?: string[];
-    // parts_filter?: string[];
+    types_filter?: string[];
+    rules_filter?: string[];
+    parts_filter?: string[];
 };
 
 export type Citation = {
