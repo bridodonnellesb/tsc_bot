@@ -729,7 +729,8 @@ def get_configured_data_source(filter):
 
 def create_filter_string(filter_array, filter_name):
     if filter_array:
-        return f"({' or '.join(f'({filter_name} eq \'{item}\')' for item in filter_array)})"
+        string = ' or '.join(f"({filter_name} eq '{item}')" for item in filter_array)
+        return f"({string})"
     return ""
 
 def prepare_model_args(request_body):
