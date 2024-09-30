@@ -748,12 +748,10 @@ def prepare_model_args(request_body):
         if message:
             messages.append({"role": message["role"], "content": message["content"]})
 
-    types_filter_array = request_messages[-1]["types_filter"]
-    types_filter_array = create_combination_strings(types_filter_array.sort())
-    rules_filter_array = request_messages[-1]["rules_filter"]
-    rules_filter_array = create_combination_strings(rules_filter_array.sort())
-    parts_filter_array = request_messages[-1]["parts_filter"]
-    parts_filter_array = create_combination_strings(parts_filter_array.sort())
+    # Use sorted() to get a sorted list without modifying the original list
+    types_filter_array = create_combination_strings(sorted(request_messages[-1]["types_filter"]))
+    rules_filter_array = create_combination_strings(sorted(request_messages[-1]["rules_filter"]))
+    parts_filter_array = create_combination_strings(sorted(request_messages[-1]["parts_filter"]))
 
     if len(types_filter_array)>0:
         types_filter_string = ' or '.join(f"(types eq '{item}')" for item in types_filter_array)

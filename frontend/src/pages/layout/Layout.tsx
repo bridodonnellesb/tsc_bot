@@ -152,13 +152,13 @@ const Layout = () => {
 
     // Define the combined options array with headers and dividers
     const combinedOptions: IDropdownOption[] = [
-        { key: 'typesHeader', text: 'Types', itemType: DropdownMenuItemType.Header },
+        { key: 'typesHeader', text: 'Document Type', itemType: DropdownMenuItemType.Header },
         ...typeDropdownOptions,
         { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
-        { key: 'rulesHeader', text: 'Rules', itemType: DropdownMenuItemType.Header },
+        { key: 'rulesHeader', text: 'Rules Set', itemType: DropdownMenuItemType.Header },
         ...rulesDropdownOptions,
         { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
-        { key: 'partsHeader', text: 'Parts', itemType: DropdownMenuItemType.Header },
+        { key: 'partsHeader', text: 'Trading Settlement Code Part', itemType: DropdownMenuItemType.Header },
         ...partsDropdownOptions,
     ];
 
@@ -259,7 +259,7 @@ const Layout = () => {
                     </Stack>
                     <Stack horizontal tokens={{ childrenGap: 10 }} className={styles.shareButtonContainer}>
                         <Dropdown
-                            placeholder="Select an option"
+                            placeholder="Filter documents"
                             multiSelect
                             options={combinedOptions}
                             onChange={onDropdownChange}
