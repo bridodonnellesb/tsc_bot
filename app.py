@@ -727,16 +727,10 @@ def get_configured_data_source(filter):
 
     return data_source
 
-def create_combination_strings(arr):
-    result = []
-    # Loop through each combination length starting from 2 to the length of the array
-    for i in range(2, len(arr) + 1):
-        # Generate combinations of the current length
-        for combo in combinations(arr, i):
-            # Join the elements of the combination with a comma and add to the result list
-            result = ','.join(combo)
-            arr.append(result)
-    return arr
+def create_filter_string(filter_array, filter_name):
+    if filter_array:
+        return f"({' or '.join(f'({filter_name} eq \'{item}\')' for item in filter_array)})"
+    return ""
 
 def prepare_model_args(request_body):
     request_messages = request_body.get("messages", [])
@@ -748,41 +742,20 @@ def prepare_model_args(request_body):
         if message:
             messages.append({"role": message["role"], "content": message["content"]})
 
-    # Use sorted() to get a sorted list without modifying the original list
-    types_filter_array = create_combination_strings(sorted(request_messages[-1]["types_filter"]))
-    rules_filter_array = create_combination_strings(sorted(request_messages[-1]["rules_filter"]))
-    parts_filter_array = create_combination_strings(sorted(request_messages[-1]["parts_filter"]))
+    # Extract the last request message filters
+    last_request_message = request_messages[-1]
+    types_filter_array = last_request_message.get("types_filter", [])
+    rules_filter_array = last_request_message.get("rules_filter", [])
+    parts_filter_array = last_request_message.get("parts_filter", [])
 
-    if len(types_filter_array)>0:
-        types_filter_string = ' or '.join(f"(types eq '{item}')" for item in types_filter_array)
-    else:
-        types_filter_string="" 
+    # Create filter strings for each filter type
+    types_filter_string = create_filter_string(types_filter_array, "type")
+    rules_filter_string = create_filter_string(rules_filter_array, "rule")
+    parts_filter_string = create_filter_string(parts_filter_array, "part")
 
-    if len(rules_filter_array)>0:
-        rules_filter_string = ' or '.join(f"(rules eq '{item}')" for item in rules_filter_array)
-    else:
-        rules_filter_string=""
-
-    if len(parts_filter_array)>0:
-        parts_filter_string = ' or '.join(f"(parts eq '{item}')" for item in parts_filter_array)
-    else:
-        parts_filter_string=""
-
-    filter_conditions = []
-
-    # Check if the filter strings are not empty and add them to the filter_conditions list
-    if types_filter_string:
-        filter_conditions.append(f"({types_filter_string})")
-    if rules_filter_string:
-        filter_conditions.append(f"({rules_filter_string})")
-    if parts_filter_string:
-        filter_conditions.append(f"({parts_filter_string})")
-
-    # Combine the conditions with ' and '
-    if len(filter_conditions)>0:
-        filter_string = ' and '.join(filter_conditions)
-    else:
-        filter_string = ""
+    # Combine the non-empty filter strings with ' and '
+    filter_conditions = [condition for condition in [types_filter_string, rules_filter_string, parts_filter_string] if condition]
+    filter_string = ' and '.join(filter_conditions) if filter_conditions else ""
 
     model_args = {
         "messages": messages,
