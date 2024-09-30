@@ -87,7 +87,7 @@ export const Answer = ({
         // }
         // else {
         if (citation.filepath) {
-            citationFilename = `${citation.title} (Release Date: ${citation.release_date} | Version ${citation.version}) - Part ${index}`;
+            citationFilename = `${citation.title} - Part ${index}`;
         }
         return citationFilename;
     }
@@ -183,6 +183,17 @@ export const Answer = ({
         );
     }
 
+    // const getActiveFiltersDescription = (
+    //     typesFilter: string[],
+    //     rulesFilter: string[],
+    //     partsFilter: string[]
+    // ): string => {
+    //     const filters = [];
+    //     if (typesFilter.length > 0) filters.push(`Type: ${typesFilter.join(', ')}`);
+    //     if (rulesFilter.length > 0) filters.push(`Type: ${rulesFilter.join(', ')}`);
+    //     if (partsFilter.length > 0) filters.push(`Type: ${partsFilter.join(', ')}`);
+    //     return filters.length > 0 ? `Filters active: \n${filters.join('; ')}` : 'No filters active';
+    // }
 
     const handleCopyMessageClick = () => {
         navigator.clipboard.writeText(parsedAnswer.markdownFormatText);
@@ -192,25 +203,7 @@ export const Answer = ({
         }, 2000);
     };
 
-    const components = {
-        // code({node, ...props}: {node: any, [key: string]: any}) {
-        //     let language;
-        //     if (props.className) {
-        //         const match = props.className.match(/language-(\w+)/);
-        //         language = match ? match[1] : undefined;
-        //     }
-        //     const codeString = node.children[0].value ?? '';
-        //     return (
-        //         <SyntaxHighlighter style={nord} language={language} PreTag="div" {...props}>
-        //             {codeString}
-        //         </SyntaxHighlighter>
-        //     );
-        // },
-        // img({node, ...props}) {
-        //     // You can add custom styling or attributes here
-        //     return <img style={{ maxWidth: '100%' }} {...props} />;
-        // },
-    }
+    const components = {}
 
     return (
         <>
@@ -287,11 +280,6 @@ export const Answer = ({
                 {chevronIsExpanded &&
                     <div className={styles.citationWrapper} >
                         {parsedAnswer.citations.map((citation, idx) => {
-                            // const filterDescription = getActiveFiltersDescription(
-                            //     parsedAnswer.types_filter,
-                            //     parsedAnswer.rules_filter,
-                            //     parsedAnswer.parts_filter
-                            // );
                             return (
                                 <span 
                                     title={createCitationFilepath(citation, ++idx)} 
@@ -306,8 +294,16 @@ export const Answer = ({
                                     <div className={styles.citation}>{idx}</div>
                                     {createCitationFilepath(citation, idx, true)}
                                 </span>);
-                                // <div className={styles.filterDescription}>{filterDescription}</div>
+                                
                         })}
+                        <div className={styles.filterDescription}>
+                            <p> Filters test.</p>
+                            {/* { getActiveFiltersDescription(
+                                parsedAnswer.types_filter,
+                                parsedAnswer.rules_filter,
+                                parsedAnswer.parts_filter
+                            );} */}
+                        </div>
                     </div>
                 }
             </Stack>

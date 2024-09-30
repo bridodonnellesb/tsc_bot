@@ -7,6 +7,21 @@
 /* .header {
     background-color: #0c172c;
 } */
+/* .dropdown-157:focus .ms-Dropdown-titleIsPlaceHolder{
+    color:#FFFFFF
+}
+.dropdown-157:hover .ms-Dropdown-titleIsPlaceHolder{
+    color:#FFFFFF
+}
+.dropdown-157:focus .ms-Dropdown-title {
+    color:#FFFFFF
+}
+.dropdown-157:hover .ms-Dropdown-title {
+    color:#FFFFFF
+}
+.dropdown-157{
+    color:#FFFFFF
+} */
 
 .headerContainer {
     display: flex;

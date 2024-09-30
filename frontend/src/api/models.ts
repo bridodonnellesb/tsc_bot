@@ -37,9 +37,9 @@ export type ChatMessage = {
     date: string;
     feedback?: Feedback;
     context?: string;
-    // types_filter?: string[];
-    // rules_filter?: string[];
-    // parts_filter?: string[];
+    types_filter?: string[];
+    rules_filter?: string[];
+    parts_filter?: string[];
 };
 
 export type Conversation = {

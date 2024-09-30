@@ -75,21 +75,21 @@ export const appStateReducer = (state: AppState, action: Action): AppState => {
                     [action.payload.answerId]: action.payload.feedback,
                 },
             };    
-        // case 'UPDATE_SELECTED_TYPES':
-        //     return {
-        //         ...state,
-        //         selectedOptions: action.payload,
-        //     };
-        // case 'UPDATE_SELECTED_RULES':
-        //     return {
-        //         ...state,
-        //         selectedOptions: action.payload,
-        //     };
-        // case 'UPDATE_SELECTED_PARTS':
-        //     return {
-        //         ...state,
-        //         selectedOptions: action.payload,
-        //     };
+        case 'UPDATE_SELECTED_TYPES':
+            return {
+                ...state,
+                selectedTypes: action.payload,
+            };
+        case 'UPDATE_SELECTED_RULES':
+            return {
+                ...state,
+                selectedRules: action.payload,
+            };
+        case 'UPDATE_SELECTED_PARTS':
+            return {
+                ...state,
+                selectedParts: action.payload,
+            };
         default:
             return state;
     }

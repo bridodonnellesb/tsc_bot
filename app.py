@@ -748,44 +748,43 @@ def prepare_model_args(request_body):
         if message:
             messages.append({"role": message["role"], "content": message["content"]})
 
-    # types_filter_array = request_messages[-1]["filter"]
-    # types_filter_array = create_combination_strings(types_filter_array.sort())
-    # rules_filter_array = request_messages[-1]["filter"]
-    # rules_filter_array = create_combination_strings(rules_filter_array.sort())
-    # parts_filter_array = request_messages[-1]["filter"]
-    # parts_filter_array = create_combination_strings(parts_filter_array.sort())
+    types_filter_array = request_messages[-1]["types_filter"]
+    types_filter_array = create_combination_strings(types_filter_array.sort())
+    rules_filter_array = request_messages[-1]["rules_filter"]
+    rules_filter_array = create_combination_strings(rules_filter_array.sort())
+    parts_filter_array = request_messages[-1]["parts_filter"]
+    parts_filter_array = create_combination_strings(parts_filter_array.sort())
 
-    # filter_string = ""
-    # if len(types_filter_array)>0:
-    #     types_filter_string = ' or '.join(f"(types eq '{item}')" for item in types_filter_array)
-    # else:
-    #     types_filter_string="" 
+    if len(types_filter_array)>0:
+        types_filter_string = ' or '.join(f"(types eq '{item}')" for item in types_filter_array)
+    else:
+        types_filter_string="" 
 
-    # if len(rules_filter_array)>0:
-    #     rules_filter_string = ' or '.join(f"(rules eq '{item}')" for item in rules_filter_array)
-    # else:
-    #     rules_filter_string=""
+    if len(rules_filter_array)>0:
+        rules_filter_string = ' or '.join(f"(rules eq '{item}')" for item in rules_filter_array)
+    else:
+        rules_filter_string=""
 
-    # if len(parts_filter_array)>0:
-    #     parts_filter_string = ' or '.join(f"(parts eq '{item}')" for item in parts_filter_array)
-    # else:
-    #     parts_filter_string=""
+    if len(parts_filter_array)>0:
+        parts_filter_string = ' or '.join(f"(parts eq '{item}')" for item in parts_filter_array)
+    else:
+        parts_filter_string=""
 
-    # filter_string = ""
-    # filter_conditions = []
+    filter_conditions = []
 
-    # # Check if the filter strings are not empty and add them to the filter_conditions list
-    # if types_filter_string:
-    #     filter_conditions.append(f"({types_filter_string})")
-    # if rules_filter_string:
-    #     filter_conditions.append(f"({rules_filter_string})")
-    # if parts_filter_string:
-    #     filter_conditions.append(f"({parts_filter_string})")
+    # Check if the filter strings are not empty and add them to the filter_conditions list
+    if types_filter_string:
+        filter_conditions.append(f"({types_filter_string})")
+    if rules_filter_string:
+        filter_conditions.append(f"({rules_filter_string})")
+    if parts_filter_string:
+        filter_conditions.append(f"({parts_filter_string})")
 
-    # # Combine the conditions with ' and '
-    # filter_string = ' and '.join(filter_conditions)
-
-    filter_string = ""
+    # Combine the conditions with ' and '
+    if len(filter_conditions)>0:
+        filter_string = ' and '.join(filter_conditions)
+    else:
+        filter_string = ""
 
     model_args = {
         "messages": messages,

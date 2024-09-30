@@ -46,12 +46,14 @@ export function parseAnswer(answer: AskResponse): ParsedAnswer {
             let oldTitle = citation.title || "Default Title";
             citation.title = he.decode(oldTitle);
             citation.reindex_id = citationReindex.toString();
-            let content = citation.content.split("\n")
-            citation.content = content[0]
+            let content = citation.content.split("\n");
+            citation.content = content[0];
             if (content.length > 1) {
-                citation.page = content[1]
-                citation.release_date = content[2]
-                citation.version = content[3]
+                citation.page = content[1];
+                // Check if content has a third element; if not, assign default value
+                citation.release_date = content.length > 2 ? content[2] : "NA";
+                // Check if content has a fourth element; if not, assign default value
+                citation.version = content.length > 3 ? content[3] : "NA";
             } else {
                 citation.page = "1";
                 citation.release_date = "NA"

@@ -11,9 +11,9 @@ export interface AppState {
     currentChat: Conversation | null;
     frontendSettings: FrontendSettings | null;
     feedbackState: { [answerId: string]: Feedback.Neutral | Feedback.Positive | Feedback.Negative; };
-    // selectedTypes: string[];
-    // selectedRules: string[];
-    // selectedParts: string[];
+    selectedTypes: string[];
+    selectedRules: string[];
+    selectedParts: string[];
 }
 
 export type Action =
@@ -30,10 +30,10 @@ export type Action =
     | { type: 'FETCH_CHAT_HISTORY', payload: Conversation[] | null }  // API Call
     | { type: 'FETCH_FRONTEND_SETTINGS', payload: FrontendSettings | null }  // API Call
     | { type: 'SET_FEEDBACK_STATE'; payload: { answerId: string; feedback: Feedback.Positive | Feedback.Negative | Feedback.Neutral } }
-    | { type: 'GET_FEEDBACK_STATE'; payload: string };
-    // | { type: 'UPDATE_SELECTED_TYPES', payload: string[] }
-    // | { type: 'UPDATE_SELECTED_RULES', payload: string[] }
-    // | { type: 'UPDATE_SELECTED_PARTS', payload: string[] };
+    | { type: 'GET_FEEDBACK_STATE'; payload: string }
+    | { type: 'UPDATE_SELECTED_TYPES', payload: string[] }
+    | { type: 'UPDATE_SELECTED_RULES', payload: string[] }
+    | { type: 'UPDATE_SELECTED_PARTS', payload: string[] };
 
 
 const initialState: AppState = {
@@ -47,10 +47,10 @@ const initialState: AppState = {
         status: CosmosDBStatus.NotConfigured,
     },
     frontendSettings: null,
-    feedbackState: {} //,
-    // selectedTypes: [],
-    // selectedRules: [],
-    // selectedParts: []
+    feedbackState: {},
+    selectedTypes: [],
+    selectedRules: [],
+    selectedParts: []
 };
 
 export const AppStateContext = createContext<{
