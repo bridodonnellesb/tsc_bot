@@ -743,10 +743,9 @@ def prepare_model_args(request_body):
             messages.append({"role": message["role"], "content": message["content"]})
 
     # Extract the last request message filters
-    last_request_message = request_messages[-1]
-    types_filter_array = last_request_message.get("types_filter", [])
-    rules_filter_array = last_request_message.get("rules_filter", [])
-    parts_filter_array = last_request_message.get("parts_filter", [])
+    types_filter_array = request_messages[-1]["types_filter"] 
+    rules_filter_array = request_messages[-1]["rules_filter"] 
+    parts_filter_array = request_messages[-1]["parts_filter"] 
 
     # Create filter strings for each filter type
     types_filter_string = create_filter_string(types_filter_array, "type")
