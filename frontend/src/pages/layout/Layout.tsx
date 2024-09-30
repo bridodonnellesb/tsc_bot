@@ -2,7 +2,7 @@ import { Outlet, Link } from "react-router-dom";
 import styles from "./Layout.module.css";
 import ESB from "../../assets/ESB.svg";
 import { CopyRegular } from "@fluentui/react-icons";
-import { Dialog, Stack, TextField, Dropdown, IDropdownOption, DropdownMenuItemType } from "@fluentui/react";
+import { Dialog, Stack, TextField, Dropdown, IDropdownOption, DropdownMenuItemType, Icon } from "@fluentui/react";
 import { useContext, useEffect, useState } from "react";
 import { HistoryButton, ShareButton } from "../../components/common/Button";
 import { AppStateContext } from "../../state/AppProvider";
@@ -68,73 +68,10 @@ const Layout = () => {
         return () => window.removeEventListener('resize', handleResize);
       }, []);  
 
-    // const onTypesDropdownChange = (
-    //     event: React.FormEvent<HTMLDivElement>,
-    //     option?: IDropdownOption, // option is now optional and matches IDropdownOption type
-    //     index?: number // index is optional and of type number
-    // ): void => {
-    //     if (option) {
-    //         const newSelectedTypes = option.selected
-    //             ? [...selectedTypes, option.key as string]
-    //             : selectedTypes.filter(key => key !== option.key);
-
-    //         // Update the local state
-    //         setSelectedTypes(newSelectedTypes);
-
-    //         // Dispatch the action to update the AppStateContext
-    //         appStateContext?.dispatch({
-    //             type: 'UPDATE_SELECTED_TYPES',
-    //             payload: newSelectedTypes,
-    //         });
-    //     }
-    // };
-    
-    // const onRulesDropdownChange = (
-    //     event: React.FormEvent<HTMLDivElement>,
-    //     option?: IDropdownOption, // option is now optional and matches IDropdownOption type
-    //     index?: number // index is optional and of type number
-    // ): void => {
-    //     if (option) {
-    //         const newSelectedRules = option.selected
-    //             ? [...selectedRules, option.key as string]
-    //             : selectedRules.filter(key => key !== option.key);
-
-    //         // Update the local state
-    //         setSelectedRules(newSelectedRules);
-
-    //         // Dispatch the action to update the AppStateContext
-    //         appStateContext?.dispatch({
-    //             type: 'UPDATE_SELECTED_RULES',
-    //             payload: newSelectedRules,
-    //         });
-    //     }
-    // };
-
-    // const onPartsDropdownChange = (
-    //     event: React.FormEvent<HTMLDivElement>,
-    //     option?: IDropdownOption, // option is now optional and matches IDropdownOption type
-    //     index?: number // index is optional and of type number
-    // ): void => {
-    //     if (option) {
-    //         const newSelectedParts = option.selected
-    //             ? [...selectedParts, option.key as string]
-    //             : selectedParts.filter(key => key !== option.key);
-
-    //         // Update the local state
-    //         setSelectedParts(newSelectedParts);
-
-    //         // Dispatch the action to update the AppStateContext
-    //         appStateContext?.dispatch({
-    //             type: 'UPDATE_SELECTED_PARTS',
-    //             payload: newSelectedParts,
-    //         });
-    //     }
-    // };
-
     const typeDropdownOptions = [
         { key: 'Code', text: 'Code' },
         { key: 'Agreed Procedure', text: 'Agreed Procedure' },
-        { key: 'Appendice', text: 'Appendice' },
+        { key: 'Appendice', text: 'Appendix' },
         { key: 'Glossary', text: 'Glossary' },
         { key: 'Training Materials', text: 'Training Materials' },
     ];
@@ -206,42 +143,57 @@ const Layout = () => {
     const dropdownStyles: Partial<IDropdownStyles> = {
         dropdown: { width: 250,
         },
-    //     dropdownItemHeader: {
-    //         backgroundColor: '#122140' ,
-    //         color: '#ffffff',
-    //         selectors: {
-    //             '&:hover': {
-    //                 color: '#ffffff', // Different text color when hovered
-    //             }
-    //         }
-    //     },
-    //     dropdownItemsWrapper: { 
-    //         backgroundColor: '#122140' ,
-    //         color: '#ffffff',
-    //     }, // Assuming you want to style the wrapper
-    //     title: { 
-    //         backgroundColor: '#122140', 
-    //         color: '#ffffff',
-    //         selectors: {
-    //             '&:hover': {
-    //                 backgroundColor: '#122140', 
-    //                 color: '#ffffff',
-    //             }
-    //         }
-    //     }, // Style for the title
-    //     dropdownItem: {
-    //         color: '#8795a2', // Text color for the dropdown items
-    //         selectors: {
-    //             '&:hover': {
-    //                 backgroundColor: '#ffffff', // Different background color when hovered
-    //                 color: '#0e2b45', // Different text color when hovered
-    //             }
-    //         }
-    //     },
-    //     dropdownItemSelected: {
-    //         backgroundColor: '#0e2b45', color: '#ffffff', // Styles for selected items
-    //     }
     };
+
+    // Handler for clearing the selection
+    const onClearSelection = () => {
+        setSelectedTypes([]);
+        setSelectedRules([]);
+        setSelectedParts([]);
+        // Dispatch an action or call a function to update the app state if necessary
+          // Dispatch actions to update the app state context for each category
+        appStateContext?.dispatch({
+            type: 'UPDATE_SELECTED_TYPES',
+            payload: [],
+        });
+        appStateContext?.dispatch({
+            type: 'UPDATE_SELECTED_RULES',
+            payload: [],
+        });
+        appStateContext?.dispatch({
+            type: 'UPDATE_SELECTED_PARTS',
+            payload: [],
+        });
+    };
+
+    // Custom render function for the caret down icon and clear button
+    const onRenderCaretDown = () => {
+        const anySelected = selectedTypes.length > 0 || selectedRules.length > 0 || selectedParts.length > 0;
+
+        return (
+        <Stack horizontal verticalAlign="center">
+            
+            {anySelected  && (
+            <Icon
+                iconName="Cancel"
+                onClick={onClearSelection}
+                styles={{
+                root: {
+                    marginRight: '8px',
+                    cursor: 'pointer',
+                    color: 'rgb(96, 94, 92)',
+                    backgroundColor: 'white',
+                    // Add any additional styles you need
+                }
+                }}
+            />
+            )}
+            <Icon iconName="ChevronDown" styles={{ root: { color: 'rgb(96, 94, 92)' } }} />
+        </Stack>
+        );
+    };
+
+    const allSelectedKeys = [...selectedTypes, ...selectedRules, ...selectedParts];
 
     return (
         <div className={styles.layout}>
@@ -263,33 +215,10 @@ const Layout = () => {
                             multiSelect
                             options={combinedOptions}
                             onChange={onDropdownChange}
+                            selectedKeys={allSelectedKeys}
                             styles={dropdownStyles}
-                            // ... other props
+                            onRenderCaretDown={onRenderCaretDown}
                         />
-                        {/* <Dropdown
-                            placeholder="Select Document Type to filter by"
-                            multiSelect
-                            options={typeDropdownOptions}
-                            selectedKeys={selectedTypes}
-                            onChange={onTypesDropdownChange}
-                            styles={dropdownStyles} // Adjust width as needed
-                        />
-                        <Dropdown
-                            placeholder="Select Rules Set to filter by"
-                            multiSelect
-                            options={rulesDropdownOptions}
-                            selectedKeys={selectedRules}
-                            onChange={onRulesDropdownChange}
-                            styles={{ dropdown: { width: 250 } }} // Adjust width as needed
-                        />
-                        <Dropdown
-                            placeholder="Select Trading Settle Code Part to filter by"
-                            multiSelect
-                            options={partsDropdownOptions}
-                            selectedKeys={selectedParts}
-                            onChange={onPartsDropdownChange}
-                            styles={{ dropdown: { width: 250 } }} // Adjust width as needed
-                        /> */}
                         {(appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured) &&
                             <HistoryButton onClick={handleHistoryClick} text={appStateContext?.state?.isChatHistoryOpen ? hideHistoryLabel : showHistoryLabel} />
                         }

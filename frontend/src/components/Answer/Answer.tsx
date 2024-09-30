@@ -192,6 +192,7 @@ export const Answer = ({
         if (typesFilter.length > 0) filters.push(`Type: ${typesFilter.join(', ')}`);
         if (rulesFilter.length > 0) filters.push(`Type: ${rulesFilter.join(', ')}`);
         if (partsFilter.length > 0) filters.push(`Type: ${partsFilter.join(', ')}`);
+        console.log(filters)
         return filters.length > 0 ? `Filters active: \n${filters.join('; ')}` : 'No filters active';
     }
 
