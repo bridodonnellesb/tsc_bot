@@ -1205,6 +1205,9 @@ async def get_conversation():
             "content": msg["content"],
             "createdAt": msg["createdAt"],
             "feedback": msg.get("feedback"),
+            'types_filter':msg.get('typeFilter', []),
+            'rules_filter':msg.get('ruleFilter', []),
+            'parts_filter':msg.get('partFilter', [])
         }
         for msg in conversation_messages
     ]
