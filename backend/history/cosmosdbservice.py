@@ -142,7 +142,10 @@ class CosmosConversationClient():
             'updatedAt': datetime.utcnow().isoformat(),
             'conversationId' : conversation_id,
             'role': input_message['role'],
-            'content': input_message['content']
+            'content': input_message['content'],
+            'typeFilter':input_message.get('types_filter', []),
+            'ruleFilter':input_message.get('rules_filter', []),
+            'partFilter':input_message.get('parts_filter', [])
         }
 
         if self.enable_message_feedback:

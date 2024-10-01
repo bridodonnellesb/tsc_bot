@@ -162,7 +162,7 @@ def format_non_streaming_response(chatCompletion, history_metadata, apim_request
             response_obj["choices"][0]["messages"].append(
                 {
                     "role": "assistant",
-                    "content": append_SAS_to_image_link(message.content),
+                    "content": append_SAS_to_image_link(message.content)
                 }
             )
             return response_obj

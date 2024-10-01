@@ -127,6 +127,9 @@ const Chat = () => {
             assistantContent += resultMessage.content
             assistantMessage = resultMessage
             assistantMessage.content = assistantContent
+            assistantMessage.parts_filter = userMessage.parts_filter
+            assistantMessage.types_filter = userMessage.types_filter
+            assistantMessage.rules_filter = userMessage.rules_filter
             
             if (resultMessage.context) {
                 toolMessage = {
@@ -684,7 +687,7 @@ const Chat = () => {
                                                         citations: parseCitationFromMessage(messages[index - 1]),
                                                         message_id: answer.id,
                                                         feedback: answer.feedback,
-                                                        types_filter: answer .types_filter,
+                                                        types_filter: answer.types_filter,
                                                         rules_filter: answer.rules_filter,
                                                         parts_filter: answer.parts_filter
                                                     }}

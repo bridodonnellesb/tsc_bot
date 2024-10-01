@@ -94,7 +94,10 @@ export const historyRead = async (convId: string): Promise<ChatMessage[]> => {
                     role: msg.role,
                     date: msg.createdAt,
                     content: msg.content,
-                    feedback: msg.feedback ?? undefined
+                    feedback: msg.feedback ?? undefined,
+                    types_filter: msg.typeFilter ?? undefined,
+                    rules_filter: msg.ruleFilter ?? undefined,
+                    parts_filter: msg.partFilter ?? undefined
                 }
                 messages.push(message)
             });
