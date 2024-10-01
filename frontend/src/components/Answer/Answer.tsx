@@ -189,11 +189,10 @@ export const Answer = ({
         partsFilter: string[]
     ): string => {
         const filters = [];
-        if (typesFilter.length > 0) filters.push(`Type: ${typesFilter.join(', ')}`);
-        if (rulesFilter.length > 0) filters.push(`Type: ${rulesFilter.join(', ')}`);
-        if (partsFilter.length > 0) filters.push(`Type: ${partsFilter.join(', ')}`);
-        console.log(filters)
-        return filters.length > 0 ? `Filters active: \n${filters.join('; ')}` : 'No filters active';
+        if (typesFilter.length > 0) filters.push(`${typesFilter.join(', ')} for Document Type`);
+        if (rulesFilter.length > 0) filters.push(`${rulesFilter.join(', ')} for the Rules Set`);
+        if (partsFilter.length > 0) filters.push(`${partsFilter.join(', ')} for the Trading Settlement Code Part`);
+        return filters.length > 0 ? `Selected Filters: \n${filters.join(';\n')}` : 'No filters active';
     }
 
     const handleCopyMessageClick = () => {
