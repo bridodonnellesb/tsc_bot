@@ -143,9 +143,9 @@ class CosmosConversationClient():
             'conversationId' : conversation_id,
             'role': input_message['role'],
             'content': input_message['content'],
-            'typeFilter':input_message['types_filter'] ,
-            'ruleFilter':input_message['rules_filter'],
-            'partFilter':input_message['parts_filter']
+            'typeFilter':input_message.get('types_filter', []),
+            'ruleFilter':input_message.get('rules_filter', []),
+            'partFilter':input_message.get('parts_filter', [])
         }
 
         if self.enable_message_feedback:
