@@ -141,7 +141,12 @@ const Chat = () => {
             }
         }
 
-        if (resultMessage.role === TOOL) toolMessage = resultMessage
+        if (resultMessage.role === TOOL){
+            toolMessage = resultMessage
+            toolMessage.parts_filter = userMessage.parts_filter
+            toolMessage.types_filter = userMessage.types_filter
+            toolMessage.rules_filter = userMessage.rules_filter
+        }
 
         if (!conversationId) {
             isEmpty(toolMessage) ?
@@ -550,6 +555,7 @@ const Chat = () => {
 
     useEffect(() => {
         if (appStateContext?.state.currentChat) {
+            console.log(appStateContext.state.currentChat)
             setMessages(appStateContext.state.currentChat.messages)
         } else {
             setMessages([])

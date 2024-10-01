@@ -126,6 +126,25 @@ const Layout = () => {
                     type: 'UPDATE_SELECTED_RULES',
                     payload: newSelectedRules,
                 });
+    
+                // Check if "Capacity Market Rules" is selected and "NA" is not already in partsDropdownOptions
+                if (option.key === 'Capacity Market Rules' && !partsDropdownOptions.some(opt => opt.key === 'NA')) {
+                    const newSelectedParts = [...selectedParts, 'NA'];
+                    setSelectedParts(newSelectedParts);
+                    appStateContext?.dispatch({
+                        type: 'UPDATE_SELECTED_PARTS',
+                        payload: newSelectedParts,
+                    });
+                }
+                else if (option.key === 'Capacity Market Rules' && !option.selected) {
+                    // Also, remove "NA" from selectedParts
+                    const newSelectedParts = selectedParts.filter(key => key !== 'NA');
+                    setSelectedParts(newSelectedParts);
+                    appStateContext?.dispatch({
+                        type: 'UPDATE_SELECTED_PARTS',
+                        payload: newSelectedParts,
+                    });
+                }
             }
             if (partsDropdownOptions.some(opt => opt.key === option.key)) {
                 const newSelectedParts = option.selected
@@ -136,6 +155,19 @@ const Layout = () => {
                     type: 'UPDATE_SELECTED_PARTS',
                     payload: newSelectedParts,
                 });
+                // Automatically select "Trading Settlement Code" if Part A, B, or C is selected
+                const partsToCheck = ['A', 'B', 'C'];
+                const tradingSettlementCodeKey = 'Trading Settlement Code'; // Adjust the key as necessary
+                if (partsToCheck.includes(option.key as string) && option.selected) {
+                    if (!selectedRules.includes(tradingSettlementCodeKey)) {
+                        const updatedSelectedRules = [...selectedRules, tradingSettlementCodeKey];
+                        setSelectedRules(updatedSelectedRules);
+                        appStateContext?.dispatch({
+                            type: 'UPDATE_SELECTED_RULES',
+                            payload: updatedSelectedRules,
+                        });
+                    }
+                } 
             }
         }
     };
