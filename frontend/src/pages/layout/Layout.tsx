@@ -87,16 +87,33 @@ const Layout = () => {
         { key: 'C', text: 'Part C' }
     ];     
 
-    // Define the combined options array with headers and dividers
-    const combinedOptions: IDropdownOption[] = [
+    // // Define the combined options array with headers and dividers
+    // const combinedOptions: IDropdownOption[] = [
+    //     { key: 'rulesHeader', text: 'Rules Set', itemType: DropdownMenuItemType.Header },
+    //     ...rulesDropdownOptions,
+    //     { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
+    //     { key: 'typesHeader', text: 'Document Type', itemType: DropdownMenuItemType.Header },
+    //     ...typeDropdownOptions,
+    //     { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
+    //     { key: 'partsHeader', text: 'Trading Settlement Code Part', itemType: DropdownMenuItemType.Header },
+    //     ...partsDropdownOptions,
+    // ];
+
+    // Check if "Trading Settlement Code" is selected
+    const isTradingSettlementCodeSelected = selectedRules.includes('Trading Settlement Code');
+
+    const combinedOptions = [
         { key: 'rulesHeader', text: 'Rules Set', itemType: DropdownMenuItemType.Header },
         ...rulesDropdownOptions,
+        // Include partsDropdownOptions only if "Trading Settlement Code" is selected
+        ...(isTradingSettlementCodeSelected ? [
+            { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
+            { key: 'partsHeader', text: 'Trading Settlement Code Part', itemType: DropdownMenuItemType.Header },
+            ...partsDropdownOptions,
+        ] : []),
         { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
         { key: 'typesHeader', text: 'Document Type', itemType: DropdownMenuItemType.Header },
         ...typeDropdownOptions,
-        { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
-        { key: 'partsHeader', text: 'Trading Settlement Code Part', itemType: DropdownMenuItemType.Header },
-        ...partsDropdownOptions,
     ];
 
     // Define the combined onDropdownChange handler
@@ -126,6 +143,16 @@ const Layout = () => {
                     type: 'UPDATE_SELECTED_RULES',
                     payload: newSelectedRules,
                 });
+
+                // If "Trading Settlement Code" is unselected, remove A, B, and C from selectedParts
+                if (option.key === 'Trading Settlement Code' && !option.selected) {
+                    const newSelectedParts = selectedParts.filter(key => key !== 'A' && key !== 'B' && key !== 'C');
+                    setSelectedParts(newSelectedParts);
+                    appStateContext?.dispatch({
+                        type: 'UPDATE_SELECTED_PARTS',
+                        payload: newSelectedParts,
+                    });
+                }
     
                 // Check if "Capacity Market Rules" is selected and "NA" is not already in partsDropdownOptions
                 if (option.key === 'Capacity Market Rules' && !partsDropdownOptions.some(opt => opt.key === 'NA')) {
@@ -136,7 +163,7 @@ const Layout = () => {
                         payload: newSelectedParts,
                     });
                 }
-                else if (option.key !== 'Capacity Market Rules' && !option.selected) {
+                else if (option.key === 'Capacity Market Rules' && !option.selected) {
                     // Also, remove "NA" from selectedParts
                     const newSelectedParts = selectedParts.filter(key => key !== 'NA');
                     setSelectedParts(newSelectedParts);
