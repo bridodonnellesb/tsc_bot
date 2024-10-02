@@ -191,7 +191,13 @@ export const Answer = ({
         const filters = [];
         if (typesFilter.length > 0) filters.push(`${typesFilter.join(', ')} for Document Type`);
         if (rulesFilter.length > 0) filters.push(`${rulesFilter.join(', ')} for the Rules Set`);
-        if (partsFilter.length > 0) filters.push(`${partsFilter.join(', ')} for the Trading Settlement Code Part`);
+        if (partsFilter.length > 0) {
+            // Filter out "NA" from the partsFilter array
+            const filteredPartsFilter = partsFilter.filter(part => part !== "NA");
+            if (filteredPartsFilter.length > 0) {
+                filters.push(`${filteredPartsFilter.join(', ')} for the Trading Settlement Code Part`);
+            }
+        }
         return filters.length > 0 ? `Selected Filters: \n${filters.join(';\n')}` : 'No filters active';
     }
 
