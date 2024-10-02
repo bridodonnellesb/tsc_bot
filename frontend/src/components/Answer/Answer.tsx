@@ -189,8 +189,8 @@ export const Answer = ({
         partsFilter: string[]
     ): string => {
         const filters = [];
-        if (typesFilter.length > 0) filters.push(`${typesFilter.join(', ')} for Document Type`);
         if (rulesFilter.length > 0) filters.push(`${rulesFilter.join(', ')} for the Rules Set`);
+        if (typesFilter.length > 0) filters.push(`${typesFilter.join(', ')} for Document Type`);
         if (partsFilter.length > 0) {
             // Filter out "NA" from the partsFilter array
             const filteredPartsFilter = partsFilter.filter(part => part !== "NA");

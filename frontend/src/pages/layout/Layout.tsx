@@ -16,9 +16,9 @@ const Layout = () => {
     const [shareLabel, setShareLabel] = useState<string | undefined>("Share");
     const [hideHistoryLabel, setHideHistoryLabel] = useState<string>("Hide chat history");
     const [showHistoryLabel, setShowHistoryLabel] = useState<string>("Show chat history");
-    const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-    const [selectedRules, setSelectedRules] = useState<string[]>([]);
-    const [selectedParts, setSelectedParts] = useState<string[]>([]);
+    const [selectedTypes, setSelectedTypes] = useState<string[]>(['Code','Agreed Procedure','Appendice','Glossary','Training Materials']);
+    const [selectedRules, setSelectedRules] = useState<string[]>(['Trading Settlement Code']);
+    const [selectedParts, setSelectedParts] = useState<string[]>(['B']);
     const appStateContext = useContext(AppStateContext)
     const ui = appStateContext?.state.frontendSettings?.ui;
 
@@ -89,11 +89,11 @@ const Layout = () => {
 
     // Define the combined options array with headers and dividers
     const combinedOptions: IDropdownOption[] = [
-        { key: 'typesHeader', text: 'Document Type', itemType: DropdownMenuItemType.Header },
-        ...typeDropdownOptions,
-        { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
         { key: 'rulesHeader', text: 'Rules Set', itemType: DropdownMenuItemType.Header },
         ...rulesDropdownOptions,
+        { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
+        { key: 'typesHeader', text: 'Document Type', itemType: DropdownMenuItemType.Header },
+        ...typeDropdownOptions,
         { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
         { key: 'partsHeader', text: 'Trading Settlement Code Part', itemType: DropdownMenuItemType.Header },
         ...partsDropdownOptions,
@@ -225,6 +225,17 @@ const Layout = () => {
         );
     };
 
+    // Custom render function for the dropdown title
+    const onRenderTitle = (options?: IDropdownOption[]): JSX.Element => {
+        // Handle the case where options might be undefined
+        if (!options) {
+        return <div><span>Filter Documents</span></div>;
+        }
+    
+        // If options are provided, you can still return the fixed title
+        return <div><span>Filter Documents</span></div>;
+    };
+
     const allSelectedKeys = [...selectedTypes, ...selectedRules, ...selectedParts];
 
     return (
@@ -250,6 +261,7 @@ const Layout = () => {
                             selectedKeys={allSelectedKeys}
                             styles={dropdownStyles}
                             onRenderCaretDown={onRenderCaretDown}
+                            onRenderTitle={onRenderTitle} 
                         />
                         {(appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured) &&
                             <HistoryButton onClick={handleHistoryClick} text={appStateContext?.state?.isChatHistoryOpen ? hideHistoryLabel : showHistoryLabel} />
