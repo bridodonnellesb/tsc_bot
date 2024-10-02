@@ -89,15 +89,16 @@ export const historyRead = async (convId: string): Promise<ChatMessage[]> => {
         let messages: ChatMessage[] = [];
         if(payload?.messages){
             payload.messages.forEach((msg: any) => {
+                console.log("msg ", msg)
                 const message: ChatMessage = {
                     id: msg.id,
                     role: msg.role,
                     date: msg.createdAt,
                     content: msg.content,
                     feedback: msg.feedback ?? undefined,
-                    types_filter: msg.types_filter ?? undefined,
-                    rules_filter: msg.rules_filter ?? undefined,
-                    parts_filter: msg.parts_filter ?? undefined
+                    types_filter: msg.types_filter ?? [],
+                    rules_filter: msg.rules_filter ?? [],
+                    parts_filter: msg.parts_filter ?? [],
                 }
                 messages.push(message)
             });
