@@ -29,9 +29,6 @@ export function parseAnswer(answer: AskResponse): ParsedAnswer {
     let answerTypes = answer.types_filter || [];
     let answerRules = answer.rules_filter || [];
     let answerParts = answer.parts_filter || [];
-    console.log(answerTypes)
-    console.log(answerRules)
-    console.log(answerParts)
 
     const citationLinks = answerText.match(/\[(doc\d\d?\d?)]/g);
 

@@ -95,9 +95,9 @@ export const historyRead = async (convId: string): Promise<ChatMessage[]> => {
                     date: msg.createdAt,
                     content: msg.content,
                     feedback: msg.feedback ?? undefined,
-                    types_filter: msg.typeFilter ?? undefined,
-                    rules_filter: msg.ruleFilter ?? undefined,
-                    parts_filter: msg.partFilter ?? undefined
+                    types_filter: msg.types_filter ?? undefined,
+                    rules_filter: msg.rules_filter ?? undefined,
+                    parts_filter: msg.parts_filter ?? undefined
                 }
                 messages.push(message)
             });

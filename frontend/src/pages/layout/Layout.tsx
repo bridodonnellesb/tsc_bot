@@ -136,7 +136,7 @@ const Layout = () => {
                         payload: newSelectedParts,
                     });
                 }
-                else if (option.key === 'Capacity Market Rules' && !option.selected) {
+                else if (option.key !== 'Capacity Market Rules' && !option.selected) {
                     // Also, remove "NA" from selectedParts
                     const newSelectedParts = selectedParts.filter(key => key !== 'NA');
                     setSelectedParts(newSelectedParts);
