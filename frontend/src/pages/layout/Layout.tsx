@@ -16,7 +16,7 @@ const Layout = () => {
     const [shareLabel, setShareLabel] = useState<string | undefined>("Share");
     const [hideHistoryLabel, setHideHistoryLabel] = useState<string>("Hide chat history");
     const [showHistoryLabel, setShowHistoryLabel] = useState<string>("Show chat history");
-    const [selectedTypes, setSelectedTypes] = useState<string[]>(['Code','Agreed Procedure','Appendice','Glossary','Training Materials']);
+    const [selectedTypes, setSelectedTypes] = useState<string[]>(['Code','Agreed Procedure','Appendice','Glossary']);
     const [selectedRules, setSelectedRules] = useState<string[]>(['Trading Settlement Code']);
     const [selectedParts, setSelectedParts] = useState<string[]>(['B']);
     const appStateContext = useContext(AppStateContext)
@@ -86,19 +86,7 @@ const Layout = () => {
         { key: 'B', text: 'Part B' },
         { key: 'C', text: 'Part C' }
     ];     
-
-    // // Define the combined options array with headers and dividers
-    // const combinedOptions: IDropdownOption[] = [
-    //     { key: 'rulesHeader', text: 'Rules Set', itemType: DropdownMenuItemType.Header },
-    //     ...rulesDropdownOptions,
-    //     { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
-    //     { key: 'typesHeader', text: 'Document Type', itemType: DropdownMenuItemType.Header },
-    //     ...typeDropdownOptions,
-    //     { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
-    //     { key: 'partsHeader', text: 'Trading Settlement Code Part', itemType: DropdownMenuItemType.Header },
-    //     ...partsDropdownOptions,
-    // ];
-
+    
     // Check if "Trading Settlement Code" is selected
     const isTradingSettlementCodeSelected = selectedRules.includes('Trading Settlement Code');
 

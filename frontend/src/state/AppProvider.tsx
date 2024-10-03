@@ -48,9 +48,9 @@ const initialState: AppState = {
     },
     frontendSettings: null,
     feedbackState: {},
-    selectedTypes: [],
-    selectedRules: [],
-    selectedParts: []
+    selectedTypes: ['Code','Agreed Procedure','Appendice','Glossary'],
+    selectedRules: ['Trading Settlement Code'],
+    selectedParts: ['B']
 };
 
 export const AppStateContext = createContext<{
