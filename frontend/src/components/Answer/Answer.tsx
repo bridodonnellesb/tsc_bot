@@ -233,6 +233,7 @@ export const Answer = ({
                                     aria-label="Copy"
                                     className={styles.copyButton}
                                     onClick={handleCopyMessageClick}
+                                    onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleCopyMessageClick()}
                                     tabIndex={0}
                                 />
                                 <ThumbLike20Filled
@@ -242,6 +243,7 @@ export const Answer = ({
                                     style={feedbackState === Feedback.Positive || appStateContext?.state.feedbackState[answer.message_id] === Feedback.Positive ? 
                                         { color: "darkgreen", cursor: "pointer" } : 
                                         { color: "slategray", cursor: "pointer" }}
+                                    onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onLikeResponseClicked()}
                                     tabIndex={0}
                                 />
                                 <ThumbDislike20Filled
@@ -251,6 +253,7 @@ export const Answer = ({
                                     style={(feedbackState !== Feedback.Positive && feedbackState !== Feedback.Neutral && feedbackState !== undefined) ? 
                                         { color: "darkred", cursor: "pointer" } : 
                                         { color: "slategray", cursor: "pointer" }}
+                                    onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onDislikeResponseClicked()}
                                     tabIndex={0}
                                 />
                             </Stack>}
