@@ -631,6 +631,10 @@ const Chat = () => {
         return isLoading || (messages && messages.length === 0) || clearingChat || appStateContext?.state.chatHistoryLoadingState === ChatHistoryLoadingState.Loading
     }
 
+    const ResizeHandle = () => (
+        <div className={styles.resizeHandle} />
+    );
+
     return (
         <div className={styles.container} role="main">
             {showAuthMessage ? (
@@ -769,15 +773,15 @@ const Chat = () => {
                     </div>
                     {/* Citation Panel */}
                     {messages && messages.length > 0 && isCitationPanelOpen && activeCitation && (
-                        <Resizable
-                            width={300} // Initial width
-                            height={300} // Initial height (if you want to control height as well)
-                            onResize={(event, { size }) => {
-                                // You can set state here if you need to do something with the new size
-                            }}
-                            handle={(h) => (
-                                <span className={`custom-resize-handle custom-resize-handle-${h}`} />
-                            )}
+                        <ResizableBox
+                            width={300} // Initial width of the citation panel
+                            height={400} // Fixed height of the citation panel
+                            minConstraints={[150, 400]} // Minimum size constraints (width, height)
+                            maxConstraints={[600, 400]} // Maximum size constraints (width, height)
+                            className={styles.citationPanel}
+                            handle={<ResizeHandle />}
+                            handleSize={[20, 20]}
+                            resizeHandles={['w']} // Only show the west (left) handle
                         >
                             <Stack.Item className={styles.citationPanel} tabIndex={0} role="tabpanel" aria-label="Citations Panel">
                                 <Stack aria-label="Citations Panel Header Container" horizontal className={styles.citationPanelHeaderContainer} horizontalAlign="space-between" verticalAlign="center">
@@ -787,18 +791,8 @@ const Chat = () => {
                                 <h5 className={styles.citationPanelTitle} tabIndex={0} title={activeCitation.url ? activeCitation.url : activeCitation.title ?? ""} onClick={() => onViewSource(activeCitation)}>{activeCitation.title}</h5>
                                 <div className={styles.citationPanelText}>Release Date: {activeCitation.release_date} | Version: {activeCitation.version}</div>
                                 <iframe key={iframeState} src={activeCitation.url+"#page="+activeCitation.page+"&zoom=50"} width="100%" height="100%"></iframe>
-                                {/* <div tabIndex={0}>
-                                    <ReactMarkdown
-                                        linkTarget="_blank"
-                                        className={styles.citationPanelContent}
-                                        children={DOMPurify.sanitize(activeCitation.content, {ALLOWED_TAGS: XSSAllowTags})}
-                                        remarkPlugins={[remarkGfm]}
-                                        rehypePlugins={[rehypeRaw]}
-                                    />
-                                </div> */}
                             </Stack.Item>
-                        </Resizable>
-
+                        </ResizableBox>
                     )}
                     {(appStateContext?.state.isChatHistoryOpen && appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured) && <ChatHistoryPanel />}
                 </Stack>
