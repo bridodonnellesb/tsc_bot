@@ -223,20 +223,17 @@
     width: 100%;
 }
 
-
-.custom-resize-handle {
+.resizeHandle {
     position: absolute;
-    width: 10px;
-    height: 100%;
-    background: #000;
-    cursor: ew-resize;
-  }
-  
-.custom-resize-handle-e {
-    right: 0;
+    width: 10px; /* Width of the handle */
     top: 0;
     bottom: 0;
-}  
+    left: -5px; /* Half of the width to ensure the handle is centered on the edge */
+    cursor: ew-resize; /* The cursor indicates horizontal resizing */
+    background-color: #ccc; /* Handle color, change as needed */
+    border-right: 1px solid #aaa; /* Optional border for better visibility */
+}
+  
 
 .citationPanelHeader {
     font-style: normal;
