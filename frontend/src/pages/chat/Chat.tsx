@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useContext, useLayoutEffect } from "react";
 import { CommandBarButton, IconButton, Dialog, DialogType, Stack, Dropdown, IDropdownOption } from "@fluentui/react";
 import { SquareRegular, ShieldLockRegular, ErrorCircleRegular, FilterDismiss16Regular, DividerShort16Filled } from "@fluentui/react-icons";
-import { Resizable } from 'react-resizable';
+import { Resizable, ResizableBox } from 'react-resizable';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from "rehype-raw";
@@ -770,8 +770,14 @@ const Chat = () => {
                     {/* Citation Panel */}
                     {messages && messages.length > 0 && isCitationPanelOpen && activeCitation && (
                         <Resizable
-                            width={200} // Initial width
-                            height={300} // Initial height
+                            width={300} // Initial width
+                            height={300} // Initial height (if you want to control height as well)
+                            onResize={(event, { size }) => {
+                                // You can set state here if you need to do something with the new size
+                            }}
+                            handle={(h) => (
+                                <span className={`custom-resize-handle custom-resize-handle-${h}`} />
+                            )}
                         >
                             <Stack.Item className={styles.citationPanel} tabIndex={0} role="tabpanel" aria-label="Citations Panel">
                                 <Stack aria-label="Citations Panel Header Container" horizontal className={styles.citationPanelHeaderContainer} horizontalAlign="space-between" verticalAlign="center">
