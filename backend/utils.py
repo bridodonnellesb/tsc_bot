@@ -103,14 +103,11 @@ def split_url(url):
     url_decoded = unquote(url)
     if url_decoded.endswith('/'):
         url_decoded = url_decoded[:-1]
-    pattern = fr'{BLOB_ACCOUNT}/([\w-]+)/([\w-]+\.\w+)'
-    match = re.search(pattern, url)
-    if match:
-        container = match.group(1)
-        blob = match.group(2)
-        return container, blob
-    else:
-        return None, None
+    pattern = fr"{BLOB_ACCOUNT}/([^/]+)/(.+)"
+    match = re.search(pattern, url_decoded)
+    container = match.group(1)
+    blob = match.group(2)
+    return container, blob
 
 def remove_SAS_token(url):
     parsed_url = urlparse(url)
