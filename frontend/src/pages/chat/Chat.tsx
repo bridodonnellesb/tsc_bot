@@ -773,26 +773,15 @@ const Chat = () => {
                     </div>
                     {/* Citation Panel */}
                     {messages && messages.length > 0 && isCitationPanelOpen && activeCitation && (
-                        <ResizableBox
-                            width={300} // Initial width of the citation panel
-                            height={400} // Fixed height of the citation panel
-                            minConstraints={[150, 400]} // Minimum size constraints (width, height)
-                            maxConstraints={[600, 400]} // Maximum size constraints (width, height)
-                            className={styles.citationPanel}
-                            handle={<ResizeHandle />}
-                            handleSize={[20, 20]}
-                            resizeHandles={['w']} // Only show the west (left) handle
-                        >
-                            <Stack.Item className={styles.citationPanel} tabIndex={0} role="tabpanel" aria-label="Citations Panel">
-                                <Stack aria-label="Citations Panel Header Container" horizontal className={styles.citationPanelHeaderContainer} horizontalAlign="space-between" verticalAlign="center">
-                                    <span aria-label="Citations" className={styles.citationPanelHeader}>Citations</span>
-                                    <IconButton iconProps={{ iconName: 'Cancel' }} aria-label="Close citations panel" onClick={() => setIsCitationPanelOpen(false)} />
-                                </Stack>
-                                <h5 className={styles.citationPanelTitle} tabIndex={0} title={activeCitation.url ? activeCitation.url : activeCitation.title ?? ""} onClick={() => onViewSource(activeCitation)}>{activeCitation.title}</h5>
-                                <div className={styles.citationPanelText}>Release Date: {activeCitation.release_date} | Version: {activeCitation.version}</div>
-                                <iframe key={iframeState} src={activeCitation.url+"#page="+activeCitation.page+"&zoom=50"} width="100%" height="100%"></iframe>
-                            </Stack.Item>
-                        </ResizableBox>
+                        <Stack.Item className={styles.citationPanel} tabIndex={0} role="tabpanel" aria-label="Citations Panel">
+                            <Stack aria-label="Citations Panel Header Container" horizontal className={styles.citationPanelHeaderContainer} horizontalAlign="space-between" verticalAlign="center">
+                                <span aria-label="Citations" className={styles.citationPanelHeader}>Citations</span>
+                                <IconButton iconProps={{ iconName: 'Cancel' }} aria-label="Close citations panel" onClick={() => setIsCitationPanelOpen(false)} />
+                            </Stack>
+                            <h5 className={styles.citationPanelTitle} tabIndex={0} title={activeCitation.url ? activeCitation.url : activeCitation.title ?? ""} onClick={() => onViewSource(activeCitation)}>{activeCitation.title}</h5>
+                            <div className={styles.citationPanelText}>Release Date: {activeCitation.release_date} | Version: {activeCitation.version}</div>
+                            <iframe key={iframeState} src={activeCitation.url+"#page="+activeCitation.page+"&zoom=50"} width="100%" height="100%"></iframe>
+                        </Stack.Item>
                     )}
                     {(appStateContext?.state.isChatHistoryOpen && appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured) && <ChatHistoryPanel />}
                 </Stack>
