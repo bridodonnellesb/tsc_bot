@@ -1,13 +1,13 @@
 import { useRef, useState, useEffect, useContext, useLayoutEffect, useCallback } from "react";
 import { CommandBarButton, IconButton, Dialog, DialogType, Stack, Dropdown, IDropdownOption } from "@fluentui/react";
 import { SquareRegular, ShieldLockRegular, ErrorCircleRegular, FilterDismiss16Regular, DividerShort16Filled } from "@fluentui/react-icons";
-import { Resizable, ResizeCallbackData  } from 'react-resizable';
+import { ResizableBox, ResizeCallbackData  } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from "rehype-raw";
 import uuid from 'react-uuid';
-import { isEmpty, throttle } from "lodash";
+import { isEmpty } from "lodash";
 import DOMPurify from 'dompurify';
 
 import styles from "./Chat.module.css";
@@ -633,9 +633,9 @@ const Chat = () => {
         return isLoading || (messages && messages.length === 0) || clearingChat || appStateContext?.state.chatHistoryLoadingState === ChatHistoryLoadingState.Loading
     }
 
-    const onResize = useCallback(throttle((event: React.SyntheticEvent, data: ResizeCallbackData) => {
-        setWidth(data.size.width);
-    }, 100), []); // Adjust the throttle delay as needed
+    const onResize = (event: React.SyntheticEvent, data: ResizeCallbackData) => {
+        setWidth(data.size.width); // Update the width state
+    };
 
     return (
         <div className={styles.container} role="main">
@@ -775,11 +775,14 @@ const Chat = () => {
                     </div>
                     {/* Citation Panel */}
                     {messages && messages.length > 0 && isCitationPanelOpen && activeCitation && (
-                        <Resizable
+                        <ResizableBox
                             width={width} // Use the width state here
                             height={300}
                             onResize={onResize} // Use the onResize function
                             resizeHandles={['w']}
+                            draggableOpts={{ grid: [25, 25] }}
+                            minConstraints={[150, 300]}
+                            maxConstraints={[500, 300]}
                         >
                                 <Stack.Item className={styles.citationPanel} style={{ width: `${width}px`}} tabIndex={0} role="tabpanel" aria-label="Citations Panel">
                                     <Stack aria-label="Citations Panel Header Container" horizontal className={styles.citationPanelHeaderContainer} horizontalAlign="space-between" verticalAlign="center">
@@ -790,7 +793,7 @@ const Chat = () => {
                                     <div className={styles.citationPanelText}>Release Date: {activeCitation.release_date} | Version: {activeCitation.version}</div>
                                     <iframe key={iframeState} src={activeCitation.url+"#page="+activeCitation.page+"&zoom=50"} width="100%" height="100%"></iframe>
                                 </Stack.Item>
-                        </Resizable>
+                        </ResizableBox>
                     )}
                     {(appStateContext?.state.isChatHistoryOpen && appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured) && <ChatHistoryPanel />}
                 </Stack>
