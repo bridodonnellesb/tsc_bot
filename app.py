@@ -27,6 +27,7 @@ from PIL import Image
 from math import sqrt
 import re
 from io import BytesIO
+from pdf2image import convert_from_path
 
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, ContentSettings
@@ -62,8 +63,10 @@ from backend.skill_utils import (
     overwrite_words_with_formulas,
     clean_ocr_text,
     download_file,
+    # convert_docx_to_images
     extract_text_with_subscript,
-    convert_docx_to_images
+    upload_images_to_blob_storage,
+    docx_to_pdf_name
 )
 
 bp = Blueprint("routes", __name__, static_folder="static", template_folder="static")
@@ -1773,16 +1776,45 @@ async def get_formula():
         return jsonify({"Unexpected error": str(e)}), 500
  
 def get_images_from_file(blob_service_client, url):
-    original_container, blob = split_url(url)
+    word_container, blob = split_url(url)
     temp_doc_path = f'{LOCAL_TEMP_DIR}{blob}'
-    text_with_subscript=""
-    if ".docx" in blob:
-        download_file(blob_service_client, url)
-        text_with_subscript = extract_text_with_subscript(temp_doc_path)
-    images, blob_name = convert_docx_to_images(blob_service_client, temp_doc_path, LOCAL_TEMP_DIR)
+    download_file(blob_service_client, url)
+    text_with_subscript = extract_text_with_subscript(temp_doc_path)
+    pdf_name = docx_to_pdf_name(temp_doc_path)
+    pdf_url = f"{BLOB_ACCOUNT}/{PDF_CONTAINER}/{pdf_name}"
+    local_pdf_filename = download_file(blob_service_client, pdf_url)
+    pdf_path = f'{LOCAL_TEMP_DIR}{local_pdf_filename}'
+    file_name = local_pdf_filename.replace(".pdf","")
+    # Convert PDF to a list of images
+    images = convert_from_path(pdf_path)
+    images_array = []
+    # Upload each image to Blob Storage
+    for i, image in enumerate(images):
+        # Convert image to bytes
+        img_byte_arr = BytesIO()
+        image.save(img_byte_arr, format='PNG')
+        img_byte_arr = img_byte_arr.getvalue()
+        # Create a new blob for the image
+        image_blob_name = f"{file_name}_page_{i+1}.png"
+        upload_images_to_blob_storage(blob_service_client, img_byte_arr, image_blob_name)
+        images_array.append(f"{BLOB_ACCOUNT}/{PAGE_IMAGE_CONTAINER}/{image_blob_name}")
+    print("Finished image upload.")
+    os.remove(pdf_path)
+    print("Removed PDF from local machine.")
     os.remove(temp_doc_path)
     print("Removed docx from local machine.")
-    return images, text_with_subscript, f'{BLOB_ACCOUNT}/{PDF_CONTAINER}/{blob_name}'
+    return images_array, text_with_subscript, pdf_url
+
+    # original_container, blob = split_url(url)
+    # temp_doc_path = f'{LOCAL_TEMP_DIR}{blob}'
+    # text_with_subscript=""
+    # if ".docx" in blob:
+    #     download_file(blob_service_client, url)
+    #     text_with_subscript = extract_text_with_subscript(temp_doc_path)
+    # images, blob_name = convert_docx_to_images(blob_service_client, temp_doc_path, LOCAL_TEMP_DIR)
+    # os.remove(temp_doc_path)
+    # print("Removed docx from local machine.")
+    # return images, text_with_subscript, f'{BLOB_ACCOUNT}/{PDF_CONTAINER}/{blob_name}'
 
 @bp.route("/skillset/page_images", methods=["POST"])
 async def get_page_images():
