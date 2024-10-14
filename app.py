@@ -53,6 +53,7 @@ from backend.utils import (
     format_non_streaming_response,
     convert_to_pf_format,
     format_pf_non_streaming_response,
+    split_url
 )
 
 from backend.skill_utils import (

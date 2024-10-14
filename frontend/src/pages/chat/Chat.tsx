@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useContext, useLayoutEffect } from "react";
+import { useRef, useState, useEffect, useContext, useLayoutEffect, useCallback } from "react";
 import { CommandBarButton, IconButton, Dialog, DialogType, Stack, Dropdown, IDropdownOption } from "@fluentui/react";
 import { SquareRegular, ShieldLockRegular, ErrorCircleRegular, FilterDismiss16Regular, DividerShort16Filled } from "@fluentui/react-icons";
 import { Resizable, ResizeCallbackData  } from 'react-resizable';
@@ -7,7 +7,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from "rehype-raw";
 import uuid from 'react-uuid';
-import { isEmpty } from "lodash";
+import { isEmpty, throttle } from "lodash";
 import DOMPurify from 'dompurify';
 
 import styles from "./Chat.module.css";
@@ -633,9 +633,9 @@ const Chat = () => {
         return isLoading || (messages && messages.length === 0) || clearingChat || appStateContext?.state.chatHistoryLoadingState === ChatHistoryLoadingState.Loading
     }
 
-    const onResize = (event: React.SyntheticEvent, data: ResizeCallbackData) => {
-        setWidth(data.size.width); // Update the width state
-    };
+    const onResize = useCallback(throttle((event: React.SyntheticEvent, data: ResizeCallbackData) => {
+        setWidth(data.size.width);
+    }, 100), []); // Adjust the throttle delay as needed
 
     return (
         <div className={styles.container} role="main">
