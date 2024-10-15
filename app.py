@@ -57,17 +57,17 @@ from backend.utils import (
     split_url
 )
 
-from backend.skill_utils import (
-    get_relevant_formula,
-    screenshot_formula,
-    overwrite_words_with_formulas,
-    clean_ocr_text,
-    download_file,
-    # convert_docx_to_images
-    extract_text_with_subscript,
-    upload_images_to_blob_storage,
-    docx_to_pdf_name
-)
+# from backend.skill_utils import (
+#     get_relevant_formula,
+#     screenshot_formula,
+#     overwrite_words_with_formulas,
+#     clean_ocr_text,
+#     download_file,
+#     # convert_docx_to_images
+#     extract_text_with_subscript,
+#     upload_images_to_blob_storage,
+#     docx_to_pdf_name
+# )
 
 bp = Blueprint("routes", __name__, static_folder="static", template_folder="static")
 
