@@ -1,0 +1,3 @@
+apt-get update
+apt install poppler-utils -y
+python3 -m gunicorn app:app

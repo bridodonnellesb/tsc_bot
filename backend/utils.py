@@ -78,26 +78,38 @@ def generateFilterString(userToken):
     group_ids = ", ".join([obj["id"] for obj in userGroups])
     return f"{AZURE_SEARCH_PERMITTED_GROUPS_COLUMN}/any(g:search.in(g, '{group_ids}'))"
 
+def remove_SAS_token(url):
+    parsed_url = urlparse(url)
+    url_without_query = parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path
+    return url_without_query
+
 def generate_SAS(url):
     container, blob = split_url(url)
-    if container is None or blob is None:
-        return ""
-    else:
-        blob_service_client =BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
-        blob_client = blob_service_client.get_blob_client(container=container, blob=blob)
+    blob_service_client =BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
+    blob_client = blob_service_client.get_blob_client(container=container, blob=blob)
 
-        sas_token_expiry_time = datetime.utcnow() + timedelta(hours=1)  # 1 hour from now
+    sas_token_expiry_time = datetime.utcnow() + timedelta(hours=1)  # 1 hour from now
 
-        sas_token = generate_blob_sas(
-            account_name=blob_client.account_name,
-            container_name=blob_client.container_name,
-            blob_name=blob_client.blob_name,
-            account_key=BLOB_CREDENTIAL,
-            permission=BlobSasPermissions(read=True),
-            expiry=sas_token_expiry_time
-        )
+    sas_token = generate_blob_sas(
+        account_name=blob_client.account_name,
+        container_name=blob_client.container_name,
+        blob_name=blob_client.blob_name,
+        account_key=BLOB_CREDENTIAL,
+        permission=BlobSasPermissions(read=True),
+        expiry=sas_token_expiry_time
+    )
 
-        return sas_token
+    return sas_token
+
+# def split_url(url):
+#     url_decoded = unquote(url)
+#     if url_decoded.endswith('/'):
+#         url_decoded = url_decoded[:-1]
+#     pattern = fr"{BLOB_ACCOUNT}/([^/]+)/(.+)"
+#     match = re.search(pattern, url_decoded)
+#     container = match.group(1)
+#     blob = match.group(2)
+#     return container, blob
 
 def split_url(url):
     url_decoded = unquote(url)
@@ -111,11 +123,6 @@ def split_url(url):
         return container, blob
     else:
         return None, None
-
-def remove_SAS_token(url):
-    parsed_url = urlparse(url)
-    url_without_query = parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path
-    return url_without_query
 
 def append_SAS_to_image_link(content):
     pattern = r'!\[(.*?)\]\((.*?)\)'
@@ -162,7 +169,7 @@ def format_non_streaming_response(chatCompletion, history_metadata, apim_request
             response_obj["choices"][0]["messages"].append(
                 {
                     "role": "assistant",
-                    "content": append_SAS_to_image_link(message.content)
+                    "content": append_SAS_to_image_link(message.content),
                 }
             )
             return response_obj
@@ -187,16 +194,13 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
                 content = delta.context
                 for i, chunk in enumerate(content["citations"]):
                     content["citations"][i]["url"]=chunk["url"]+"?"+generate_SAS(chunk["url"])
-                messageObj = {
-                    "role": "tool", 
-                    "content": json.dumps(content)
-                }
+                messageObj = {"role": "tool", "content": json.dumps(content)}
                 response_obj["choices"][0]["messages"].append(messageObj)
                 return response_obj
             if delta.role == "assistant" and hasattr(delta, "context"):
                 messageObj = {
                     "role": "assistant",
-                    "context": delta.context
+                    "context": delta.context,
                 }
                 response_obj["choices"][0]["messages"].append(messageObj)
                 return response_obj
@@ -204,7 +208,7 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
                 if delta.content:
                     messageObj = {
                         "role": "assistant",
-                        "content": delta.content 
+                        "content": delta.content,
                     }
                     response_obj["choices"][0]["messages"].append(messageObj)
                     return response_obj
