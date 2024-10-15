@@ -286,8 +286,8 @@ export const Answer = ({
                         </Stack.Item>
                     )}
                     <Stack.Item className={styles.answerDisclaimerContainer}>
-                        <span className={styles.answerDisclaimer}>Results based on documents retrieved from SEM-O website on 09/10/2024.</span>
-                        <span className={styles.answerDisclaimer}>AI-generated content may be incorrect.</span>
+                        <span className={styles.answerDisclaimer}>Results based on documents retrieved from SEM-O website on 09/10/2024. </span>
+                        <span className={styles.answerDisclaimer}>AI-generated content may be incorrect. </span>
                     </Stack.Item>
                 </Stack>
                 {chevronIsExpanded &&

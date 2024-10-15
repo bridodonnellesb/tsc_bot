@@ -28,9 +28,9 @@ DOCUMENT_INTELLIGENCE_KEY = os.environ.get("DOCUMENT_INTELLIGENCE_KEY")
 # Blob Storage
 BLOB_CREDENTIAL = os.environ.get("BLOB_CREDENTIAL")
 BLOB_ACCOUNT = os.environ.get("BLOB_ACCOUNT")
-FORMULA_IMAGE_CONTAINER = os.environ.get("FORMULA_IMAGE_CONTAINER")
-PAGE_IMAGE_CONTAINER = os.environ.get("PAGE_IMAGE_CONTAINER")
-PDF_CONTAINER = os.environ.get("PDF_CONTAINER")
+FORMULA_IMAGE_CONTAINER = os.environ.get("CONTAINER_FORMULA_IMAGE")
+PAGE_IMAGE_CONTAINER = os.environ.get("CONTAINER_PAGE_IMAGE")
+PDF_CONTAINER = os.environ.get("CONTAINER_PDF")
 LOCAL_TEMP_DIR = os.environ.get("LOCAL_TEMP_DIR")
  
 def download_file(blob_service_client, url):
