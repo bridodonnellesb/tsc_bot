@@ -1688,6 +1688,7 @@ def get_relevant_formula(url, result, width):
 @bp.route("/skillset/formula", methods=["POST"])
 async def get_formula():
     try:
+        logging.info(f"Calling /skillset/formula")
         request_json = await request.get_json()
         if not request_json or "values" not in request_json:
             raise ValueError("Invalid request payload")
@@ -1698,8 +1699,9 @@ async def get_formula():
         )
         errors = None
         warnings = None
+        logging.info(f"{len(values)} pages received")
         document_blob_container, blob_name = split_url(values[0]["data"]["image"]["url"])
-        logging.info(f"{len(values)} pages received for Document {document_blob_container}")
+        logging.info(f"Analysing Document {document_blob_container}")
         for page_number, item in enumerate(values): # going through the pages
             url = item["data"]["image"]["url"]
             image_data = item["data"]["image"]["data"]
@@ -1777,132 +1779,5 @@ async def get_formula():
     except Exception as e:
         logging.exception("Unexpected exception in /skillset/formula")
         return jsonify({"Unexpected error": str(e)}), 500
- 
-# def get_images_from_file(blob_service_client, url):
-#     word_container, blob = split_url(url)
-#     temp_doc_path = f'{LOCAL_TEMP_DIR}{blob}'
-#     download_file(blob_service_client, url)
-#     text_with_subscript = extract_text_with_subscript(temp_doc_path)
-#     pdf_name = docx_to_pdf_name(temp_doc_path)
-#     pdf_url = f"{BLOB_ACCOUNT}/{PDF_CONTAINER}/{pdf_name}"
-#     local_pdf_filename = download_file(blob_service_client, pdf_url)
-#     pdf_path = f'{LOCAL_TEMP_DIR}{local_pdf_filename}'
-#     file_name = local_pdf_filename.replace(".pdf","")
-#     # Convert PDF to a list of images
-#     images = convert_from_path(pdf_path)
-#     images_array = []
-#     # Upload each image to Blob Storage
-#     for i, image in enumerate(images):
-#         # Convert image to bytes
-#         img_byte_arr = BytesIO()
-#         image.save(img_byte_arr, format='PNG')
-#         img_byte_arr = img_byte_arr.getvalue()
-#         # Create a new blob for the image
-#         image_blob_name = f"{file_name}_page_{i+1}.png"
-#         upload_images_to_blob_storage(blob_service_client, img_byte_arr, image_blob_name)
-#         images_array.append(f"{BLOB_ACCOUNT}/{PAGE_IMAGE_CONTAINER}/{image_blob_name}")
-#     print("Finished image upload.")
-#     os.remove(pdf_path)
-#     print("Removed PDF from local machine.")
-#     os.remove(temp_doc_path)
-#     print("Removed docx from local machine.")
-#     return images_array, text_with_subscript, pdf_url
-
-    # original_container, blob = split_url(url)
-    # temp_doc_path = f'{LOCAL_TEMP_DIR}{blob}'
-    # text_with_subscript=""
-    # if ".docx" in blob:
-    #     download_file(blob_service_client, url)
-    #     text_with_subscript = extract_text_with_subscript(temp_doc_path)
-    # images, blob_name = convert_docx_to_images(blob_service_client, temp_doc_path, LOCAL_TEMP_DIR)
-    # os.remove(temp_doc_path)
-    # print("Removed docx from local machine.")
-    # return images, text_with_subscript, f'{BLOB_ACCOUNT}/{PDF_CONTAINER}/{blob_name}'
-
-# @bp.route("/skillset/page_images", methods=["POST"])
-# async def get_page_images():
-#     try:
-#         request_json = await request.get_json()
-#         if not request_json or "values" not in request_json:
-#             raise ValueError("Invalid request payload")
-#         values = request_json.get("values", None)
-#         blob_service_client = BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
-#         response_array = []
-#         for item in values:
-#             url = item["data"]["url"]
-#             images, docx_text, pdf = get_images_from_file(blob_service_client, url)
-
-#             output={
-#                 "recordId": item['recordId'],
-#                 "data": {
-#                     "images": images,
-#                     "docx_text": docx_text,
-#                     "pdf_url":pdf
-#                 },
-#                 "errors": None,
-#                 "warnings": None
-#             }
-#             response_array.append(output)
-#         response = jsonify({"values":response_array})
-#         return response, 200  # Status code should be 200 for success
-#     except Exception as e:
-#         logging.exception("Unexpected exception in /skillset/page_images")
-#         return jsonify({"Unexpected error": str(e)}), 500
-
-# def get_cleaned_up_text(blob_service_client, document_analysis_client, image_url, docx_text):
-#     blob_container, blob_name = split_url(image_url)
-#     image_blob_client = blob_service_client.get_blob_client(container = blob_container, blob =blob_name)
-#     downloader = image_blob_client.download_blob()
-#     image_bytes = downloader.readall()
-#     poller = document_analysis_client.begin_analyze_document(
-#         "prebuilt-read", document=image_bytes, features=[AnalysisFeature.FORMULAS]
-#     )
-#     result = poller.result()
- 
-#     if len(result.pages[0].words)>0:
-#         content = result.pages[0].words
-#         formulas = get_relevant_formula(image_url, result)
-#         for i, formula in enumerate(formulas):
-#             screenshot_formula(blob_service_client, image_bytes, formula.content, formula.polygon)
-#             formula.content=f'![]({BLOB_ACCOUNT}/{FORMULA_IMAGE_CONTAINER}/{formula.content}'
- 
-#         updated_content = overwrite_words_with_formulas(content, formulas)
- 
-#     ocr_text = " ".join(item.content for item in updated_content)
-#     final_text = clean_ocr_text(docx_text, ocr_text)
-#     return final_text
-
-# @bp.route("/skillset/clean_text", methods=["POST"])
-# async def extract_page_images():
-#     try:
-#         request_json = await request.get_json()
-#         if not request_json or "values" not in request_json:
-#             raise ValueError("Invalid request payload")
-#         values = request_json.get("values", None)
-#         blob_service_client = BlobServiceClient(BLOB_ACCOUNT, credential=BLOB_CREDENTIAL)
-#         document_analysis_client = DocumentAnalysisClient(
-#             endpoint=DOCUMENT_INTELLIGENCE_ENDPOINT,
-#             credential=AzureKeyCredential(DOCUMENT_INTELLIGENCE_KEY)
-#         )
-#         response_array = []
-#         for item in values:
-#             image_url = item["data"]["url"]
-#             docx_text = item["data"]["docx_text"]
-#             final_text = get_cleaned_up_text(blob_service_client, document_analysis_client, image_url, docx_text)
-
-#             output={
-#                 "recordId": item['recordId'],
-#                 "data": {
-#                     "text": final_text
-#                 },
-#                 "errors": None,
-#                 "warnings": None
-#             }
-#             response_array.append(output)
-#         response = jsonify({"values":response_array})
-#         return response, 200  # Status code should be 200 for success
-#     except Exception as e:
-#         logging.exception("Unexpected exception in /skillset/clean_text")
-#         return jsonify({"Unexpected error": str(e)}), 500
 
 app = create_app()
