@@ -1433,89 +1433,89 @@ async def generate_title(conversation_messages):
     except Exception as e:
         return messages[-2]["content"]
 
-@bp.route("/skillset/image_offsets", methods=["POST"]) 
-async def calculate_image_offset():
-    try:
-        request_json = await request.get_json()
-        values = request_json.get("values", None)
-        reponse_array = []
-        for item in values: # going through each document
-            logging.info("Getting offsets for Document URL")
-            url = item["data"]["url"]
-            response = requests.get(f"{url}?{generate_SAS(url)}")
-            if response.status_code ==200:
-                logging.info("Document successfully fetched")
-                doc = Document(BytesIO(response.content))
-                root = ET.fromstring(doc._element.xml)
+# @bp.route("/skillset/image_offsets", methods=["POST"]) 
+# async def calculate_image_offset():
+#     try:
+#         request_json = await request.get_json()
+#         values = request_json.get("values", None)
+#         reponse_array = []
+#         for item in values: # going through each document
+#             logging.info("Getting offsets for Document URL")
+#             url = item["data"]["url"]
+#             response = requests.get(f"{url}?{generate_SAS(url)}")
+#             if response.status_code ==200:
+#                 logging.info("Document successfully fetched")
+#                 doc = Document(BytesIO(response.content))
+#                 root = ET.fromstring(doc._element.xml)
                 
-                logging.info("XML successfully extracted")
-                offsets = []
-                count_characters = 0
-                dpi = 96
+#                 logging.info("XML successfully extracted")
+#                 offsets = []
+#                 count_characters = 0
+#                 dpi = 96
         
-                for elem in root.iter():
-                    # Check if the element is a text element with the correct tag
-                    if elem.tag == '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t':
-                        count_characters += len(elem.text)
-                    # Check if the element is a drawing element
-                    elif elem.tag == '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}drawing':
-                        # If we encounter a drawing tag, we save the current text block and reset the text and counter
-                        # offsets.append(count_characters)
-                        extent_elem = elem.find('.//{http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing}extent')
-                        if extent_elem is not None:
-                            cy_value = int(extent_elem.get('cy', '0'))
-                            height_pixel = (cy_value / 914400)*dpi
-                            cx_value = int(extent_elem.get('cx', '0'))
-                            width_pixel = (cx_value / 914400)*dpi
-                            if height_pixel > 35 and width_pixel > 35:
-                                logging.info("Including Image")
-                                offsets.append(count_characters)
+#                 for elem in root.iter():
+#                     # Check if the element is a text element with the correct tag
+#                     if elem.tag == '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t':
+#                         count_characters += len(elem.text)
+#                     # Check if the element is a drawing element
+#                     elif elem.tag == '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}drawing':
+#                         # If we encounter a drawing tag, we save the current text block and reset the text and counter
+#                         # offsets.append(count_characters)
+#                         extent_elem = elem.find('.//{http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing}extent')
+#                         if extent_elem is not None:
+#                             cy_value = int(extent_elem.get('cy', '0'))
+#                             height_pixel = (cy_value / 914400)*dpi
+#                             cx_value = int(extent_elem.get('cx', '0'))
+#                             width_pixel = (cx_value / 914400)*dpi
+#                             if height_pixel > 35 and width_pixel > 35:
+#                                 logging.info("Including Image")
+#                                 offsets.append(count_characters)
  
-                logging.info(f"{len(offsets)} images found.")
+#                 logging.info(f"{len(offsets)} images found.")
 
-            output={
-                "recordId": item['recordId'],
-                "data": {
-                    "image_offsets": offsets
-                },
-                "errors": None,
-                "warnings": None
-            }
-            reponse_array.append(output)
-        response = jsonify({"values":reponse_array})
-        return response, 200  # Status code should be 200 for success
-    except Exception as e:
-        logging.exception("Exception in /skillset/image_offsets")
-        exception = str(e)
-        return jsonify({"error": exception}), 500
+#             output={
+#                 "recordId": item['recordId'],
+#                 "data": {
+#                     "image_offsets": offsets
+#                 },
+#                 "errors": None,
+#                 "warnings": None
+#             }
+#             reponse_array.append(output)
+#         response = jsonify({"values":reponse_array})
+#         return response, 200  # Status code should be 200 for success
+#     except Exception as e:
+#         logging.exception("Exception in /skillset/image_offsets")
+#         exception = str(e)
+#         return jsonify({"error": exception}), 500
 
-@bp.route("/skillset/image_urls", methods=["POST"]) 
-async def creating_insert_text():
-    try:
-        request_json = await request.get_json()
-        values = request_json.get("values", None)
-        reponse_array = []
-        for item in values: # going through each document
-            logging.info(f"Getting urls for Document {item['recordId']}")
-            urls = item["data"]["urls"]
-            insert_text = [f"![]({url})" for url in urls]   
+# @bp.route("/skillset/image_urls", methods=["POST"]) 
+# async def creating_insert_text():
+#     try:
+#         request_json = await request.get_json()
+#         values = request_json.get("values", None)
+#         reponse_array = []
+#         for item in values: # going through each document
+#             logging.info(f"Getting urls for Document {item['recordId']}")
+#             urls = item["data"]["urls"]
+#             insert_text = [f"![]({url})" for url in urls]   
 
-            output={
-                "recordId": item['recordId'],
-                "data": {
-                    "image_urls": insert_text
-                },
-                "errors": None,
-                "warnings": None
-            }
-            reponse_array.append(output)
-            logging.info(f"{len(urls)} Image Urls extracted")
-        response = jsonify({"values":reponse_array})
-        return response, 200  # Status code should be 200 for success
-    except Exception as e:
-        logging.exception("Exception in /skillset/image_urls")
-        exception = str(e)
-        return jsonify({"error": exception}), 500
+#             output={
+#                 "recordId": item['recordId'],
+#                 "data": {
+#                     "image_urls": insert_text
+#                 },
+#                 "errors": None,
+#                 "warnings": None
+#             }
+#             reponse_array.append(output)
+#             logging.info(f"{len(urls)} Image Urls extracted")
+#         response = jsonify({"values":reponse_array})
+#         return response, 200  # Status code should be 200 for success
+#     except Exception as e:
+#         logging.exception("Exception in /skillset/image_urls")
+#         exception = str(e)
+#         return jsonify({"error": exception}), 500
 
 def calculate_page_number(midpoint_offset, page_list):
     for page in page_list:

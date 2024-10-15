@@ -103,7 +103,7 @@ def split_url(url):
     url_decoded = unquote(url)
     if url_decoded.endswith('/'):
         url_decoded = url_decoded[:-1]
-    pattern = fr'{BLOB_ACCOUNT}/([\w-]+)/([\w-]+\.\w+)'
+    pattern = fr"{BLOB_ACCOUNT}/([^/]+)/(.+)"
     match = re.search(pattern, url)
     if match:
         container = match.group(1)
