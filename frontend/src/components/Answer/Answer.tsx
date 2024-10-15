@@ -286,11 +286,19 @@ export const Answer = ({
                         </Stack.Item>
                     )}
                     <Stack.Item className={styles.answerDisclaimerContainer}>
-                        <span className={styles.answerDisclaimer}>AI-generated content may be incorrect</span>
+                        <span className={styles.answerDisclaimer}>Results based on documents retrieved from SEM-O website on 09/10/2024.</span>
+                        <span className={styles.answerDisclaimer}>AI-generated content may be incorrect.</span>
                     </Stack.Item>
                 </Stack>
                 {chevronIsExpanded &&
                     <div className={styles.citationWrapper} >
+                        <div className={styles.filterDescription}>
+                            { getActiveFiltersDescription(
+                                parsedAnswer.types_filter,
+                                parsedAnswer.rules_filter,
+                                parsedAnswer.parts_filter
+                            )} 
+                        </div>
                         {parsedAnswer.citations.map((citation, idx) => {
                             return (
                                 <span 
@@ -308,13 +316,6 @@ export const Answer = ({
                                 </span>);
                                 
                         })}
-                        <div className={styles.filterDescription}>
-                            { getActiveFiltersDescription(
-                                parsedAnswer.types_filter,
-                                parsedAnswer.rules_filter,
-                                parsedAnswer.parts_filter
-                            )} 
-                        </div>
                     </div>
                 }
             </Stack>
