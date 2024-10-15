@@ -777,12 +777,12 @@ const Chat = () => {
                     {messages && messages.length > 0 && isCitationPanelOpen && activeCitation && (
                         <ResizableBox
                             width={width} // Use the width state here
-                            height={300}
+                            height={Infinity}
                             onResize={onResize} // Use the onResize function
                             resizeHandles={['w']}
                             draggableOpts={{ grid: [25, 25] }}
-                            minConstraints={[150, 300]}
-                            maxConstraints={[500, 300]}
+                            minConstraints={[150, Infinity]}
+                            maxConstraints={[500, Infinity]}
                         >
                                 <Stack.Item className={styles.citationPanel} style={{ width: `${width}px`}} tabIndex={0} role="tabpanel" aria-label="Citations Panel">
                                     <Stack aria-label="Citations Panel Header Container" horizontal className={styles.citationPanelHeaderContainer} horizontalAlign="space-between" verticalAlign="center">
