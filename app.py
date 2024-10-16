@@ -1483,22 +1483,30 @@ async def get_page_number():
     except Exception as e:
         logging.exception("Exception in /skillset/page")
         exception = str(e)
-        return jsonify({"error": exception}), 500
+        return jsonify({"Unexpected error in /skillset/page": exception}), 500
     
 def get_images_from_file(blob_service_client, url):
-    word_container, blob = split_url(url)
-    temp_doc_path = f'{LOCAL_TEMP_DIR}{blob}'
-    download_file(blob_service_client, url)
-    text_with_subscript = extract_text_with_subscript(temp_doc_path)
-    pdf_name = docx_to_pdf_name(temp_doc_path)
-    pdf_url = f"{BLOB_ACCOUNT}/{PDF_CONTAINER}/{pdf_name}"
+    container, blob = split_url(url)
+    text_with_subscript=""
+    logging.info(f"Downloading {blob}")
+    if ".docx" in blob:
+        temp_doc_path = f'{LOCAL_TEMP_DIR}{blob}'
+        download_file(blob_service_client, url)
+        text_with_subscript = extract_text_with_subscript(temp_doc_path)
+        pdf_name = docx_to_pdf_name(temp_doc_path)
+        pdf_url = f"{BLOB_ACCOUNT}/{PDF_CONTAINER}/{pdf_name}"
+    else:
+        pdf_url = url
+    logging.info(f"Downloading PDF")
     local_pdf_filename = download_file(blob_service_client, pdf_url)
     pdf_path = f'{LOCAL_TEMP_DIR}{local_pdf_filename}'
     file_name = local_pdf_filename.replace(".pdf","")
     # Convert PDF to a list of images
+    logging.info("Converting pdf to images.")
     images = convert_from_path(pdf_path)
     images_array = []
     # Upload each image to Blob Storage
+    logging.info("Starting image upload.")
     for i, image in enumerate(images):
         # Convert image to bytes
         img_byte_arr = BytesIO()
@@ -1508,11 +1516,11 @@ def get_images_from_file(blob_service_client, url):
         image_blob_name = f"{file_name}_page_{i+1}.png"
         upload_images_to_blob_storage(blob_service_client, img_byte_arr, image_blob_name)
         images_array.append(f"{BLOB_ACCOUNT}/{PAGE_IMAGE_CONTAINER}/{image_blob_name}")
-    print("Finished image upload.")
+    logging.info("Finished image upload.")
     os.remove(pdf_path)
-    print("Removed PDF from local machine.")
+    logging.info("Removed PDF from local machine.")
     os.remove(temp_doc_path)
-    print("Removed docx from local machine.")
+    logging.info("Removed docx from local machine.")
     return images_array, text_with_subscript, pdf_url
 
 
@@ -1527,7 +1535,9 @@ async def get_page_images():
         response_array = []
         for item in values:
             url = item["data"]["url"]
+            logging.info(f"Starting get_images_from_file")
             images, docx_text, pdf = get_images_from_file(blob_service_client, url)
+            logging.info(f"Finished get_images_from_file")
 
             output={
                 "recordId": item['recordId'],
@@ -1544,7 +1554,7 @@ async def get_page_images():
         return response, 200  # Status code should be 200 for success
     except Exception as e:
         logging.exception("Unexpected exception in /skillset/generate_page_images")
-        return jsonify({"Unexpected error": str(e)}), 500
+        return jsonify({"Unexpected error in /skillset/generate_page_images": str(e)}), 500
     
 def get_cleaned_up_text(blob_service_client, document_analysis_client, image_url, docx_text):
     blob_container, blob_name = split_url(image_url)
@@ -1555,9 +1565,11 @@ def get_cleaned_up_text(blob_service_client, document_analysis_client, image_url
         "prebuilt-read", document=image_bytes, features=[AnalysisFeature.FORMULAS]
     )
     result = poller.result()
- 
+    
+    logging.info(f"Checking results")
     if len(result.pages[0].words)>0:
         content = result.pages[0].words
+        logging.info(f"Getting relevant formulas")
         formulas = get_relevant_formula(image_url, result)
         for i, formula in enumerate(formulas):
             screenshot_formula(blob_service_client, image_bytes, formula.content, formula.polygon)
@@ -1566,6 +1578,7 @@ def get_cleaned_up_text(blob_service_client, document_analysis_client, image_url
         updated_content = overwrite_words_with_formulas(content, formulas)
  
     ocr_text = " ".join(item.content for item in updated_content)
+    logging.info(f"Cleaning OCR Text")
     final_text = clean_ocr_text(docx_text, ocr_text)
     return final_text
 
@@ -1600,6 +1613,6 @@ async def extract_page_images():
         return response, 200  # Status code should be 200 for success
     except Exception as e:
         logging.exception("Unexpected exception in /skillset/clean_text")
-        return jsonify({"Unexpected error": str(e)}), 500
+        return jsonify({"Unexpected error in /skillset/clean_text": str(e)}), 500
     
 app = create_app()
