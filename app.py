@@ -908,7 +908,6 @@ async def complete_chat_request(request_body):
         return format_non_streaming_response(response, history_metadata, apim_request_id)
 
 
-
 async def stream_chat_request(request_body):
     response, apim_request_id = await send_chat_request(request_body)
     history_metadata = request_body.get("history_metadata", {})
@@ -956,6 +955,7 @@ def get_frontend_settings():
     except Exception as e:
         logging.exception("Exception in /frontend_settings")
         return jsonify({"error": str(e)}), 500
+
 
 ## Conversation History API ##
 @bp.route("/history/generate", methods=["POST"])
@@ -1519,7 +1519,8 @@ def get_images_from_file(blob_service_client, url):
     logging.info("Finished image upload.")
     os.remove(pdf_path)
     logging.info("Removed PDF from local machine.")
-    os.remove(temp_doc_path)
+    if ".docx" in blob:
+        os.remove(temp_doc_path)
     logging.info("Removed docx from local machine.")
     return images_array, text_with_subscript, pdf_url
 
