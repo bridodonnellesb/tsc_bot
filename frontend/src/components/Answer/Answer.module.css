@@ -52,7 +52,7 @@
     font-size: 12px;
     line-height: 16px;
 
-    display: block;/* flex; */
+    display: flex;
     align-items: center;
     text-align: center;
     color: #ffff00;
