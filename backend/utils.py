@@ -66,8 +66,7 @@ def fetchUserGroups(userToken, nextLink=None):
         logging.error(f"Exception in fetchUserGroups: {e}")
         return []
 
-
-def generateFilterString(userToken):
+def generateUserFilterString(userToken):
     # Get list of groups user is a member of
     userGroups = fetchUserGroups(userToken)
 
@@ -77,6 +76,28 @@ def generateFilterString(userToken):
 
     group_ids = ", ".join([obj["id"] for obj in userGroups])
     return f"{AZURE_SEARCH_PERMITTED_GROUPS_COLUMN}/any(g:search.in(g, '{group_ids}'))"
+
+def create_filter_string(filter_array, filter_name):
+    if filter_array:
+        string = ' or '.join(f"({filter_name} eq '{item}')" for item in filter_array)
+        return f"({string})"
+    return ""
+
+def generateFilterString(message):
+    # Extract the last request message filters
+    types_filter_array = message["types_filter"] 
+    rules_filter_array = message["rules_filter"] 
+    parts_filter_array = message["parts_filter"] 
+
+    # Create filter strings for each filter type
+    types_filter_string = create_filter_string(types_filter_array, "type")
+    rules_filter_string = create_filter_string(rules_filter_array, "rule")
+    parts_filter_string = create_filter_string(parts_filter_array, "part")
+
+    # Combine the non-empty filter strings with ' and '
+    filter_conditions = [condition for condition in [types_filter_string, rules_filter_string, parts_filter_string] if condition]
+    filter_string = ' and '.join(filter_conditions) if filter_conditions else ""
+    return filter_string
 
 def remove_SAS_token(url):
     parsed_url = urlparse(url)
@@ -214,60 +235,3 @@ def format_stream_response(chatCompletionChunk, history_metadata, apim_request_i
                     return response_obj
 
     return {}
-
-
-def format_pf_non_streaming_response(
-    chatCompletion, history_metadata, response_field_name, message_uuid=None
-):
-    if chatCompletion is None:
-        logging.error(
-            "chatCompletion object is None - Increase PROMPTFLOW_RESPONSE_TIMEOUT parameter"
-        )
-        return {
-            "error": "No response received from promptflow endpoint increase PROMPTFLOW_RESPONSE_TIMEOUT parameter or check the promptflow endpoint."
-        }
-    if "error" in chatCompletion:
-        logging.error(f"Error in promptflow response api: {chatCompletion['error']}")
-        return {"error": chatCompletion["error"]}
-
-    logging.debug(f"chatCompletion: {chatCompletion}")
-    try:
-        response_obj = {
-            "id": chatCompletion["id"],
-            "model": "",
-            "created": "",
-            "object": "",
-            "choices": [
-                {
-                    "messages": [
-                        {
-                            "role": "assistant",
-                            "content": chatCompletion[response_field_name],
-                        }
-                    ]
-                }
-            ],
-            "history_metadata": history_metadata,
-        }
-        return response_obj
-    except Exception as e:
-        logging.error(f"Exception in format_pf_non_streaming_response: {e}")
-        return {}
-
-
-def convert_to_pf_format(input_json, request_field_name, response_field_name):
-    output_json = []
-    logging.debug(f"Input json: {input_json}")
-    # align the input json to the format expected by promptflow chat flow
-    for message in input_json["messages"]:
-        if message:
-            if message["role"] == "user":
-                new_obj = {
-                    "inputs": {request_field_name: message["content"]},
-                    "outputs": {response_field_name: ""},
-                }
-                output_json.append(new_obj)
-            elif message["role"] == "assistant" and len(output_json) > 0:
-                output_json[-1]["outputs"][response_field_name] = message["content"]
-    logging.debug(f"PF formatted response: {output_json}")
-    return output_json
