@@ -1115,11 +1115,11 @@ async def clean_text_with_normalised_images():
         )
         response_array = []
         for item in values:
-            data = item["data"]["image"]["data"]
-            image_page = item["data"]["image"]["pageNumber"]
+            data = item["data"]["image_data"]
+            image_page = item["data"]["page_number"]
             document_title = item["data"]["title"]
             image_identifier = f"{document_title}_Page{image_page}"
-            docx_text = item["data"]["docx_text"]
+            docx_text = item["data"]["docx_text"].replace(".pdf","").replace(".docx","")
             final_text = extract_formulas_with_image_data(blob_service_client, document_analysis_client, data, docx_text, image_identifier)
 
             output={
