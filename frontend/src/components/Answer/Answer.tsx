@@ -291,13 +291,6 @@ export const Answer = ({
                 </Stack>
                 {chevronIsExpanded &&
                     <div className={styles.citationWrapper} >
-                        <div className={styles.filterDescription}>
-                            { getActiveFiltersDescription(
-                                parsedAnswer.types_filter,
-                                parsedAnswer.rules_filter,
-                                parsedAnswer.parts_filter
-                            )} 
-                        </div>
                         {parsedAnswer.citations.map((citation, idx) => {
                             return (
                                 <span 
@@ -315,6 +308,13 @@ export const Answer = ({
                                 </span>);
                                 
                         })}
+                        <div className={styles.filterDescription}>
+                            { getActiveFiltersDescription(
+                                parsedAnswer.types_filter,
+                                parsedAnswer.rules_filter,
+                                parsedAnswer.parts_filter
+                            )} 
+                        </div>
                     </div>
                 }
             </Stack>

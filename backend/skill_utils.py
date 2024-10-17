@@ -291,11 +291,7 @@ def screenshot_formula(blob_service_client, image_bytes, formula_filepath, point
     blob_client = blob_service_client.get_blob_client(container=FORMULA_IMAGE_CONTAINER, blob=formula_filepath)
     blob_client.upload_blob(image_stream.getvalue(), content_settings=content_settings, blob_type="BlockBlob", overwrite=True)
  
-def generate_filename(url, id):
-    pattern = fr"{BLOB_ACCOUNT}/([^/]+)/(.+).png"
-    match = re.search(pattern, url)
-    page_source = match.group(2)  
-    return f"formula__{page_source}_{id}.png"
+
  
 def is_complex_formula(formula):
     # Define patterns that indicate a complex formula
@@ -315,12 +311,28 @@ def is_complex_formula(formula):
             return True
     # If none of the complex patterns are found, it's a simple formula
     return False
- 
-def get_relevant_formula(url, result):
+
+def generate_filename(url, id):
+    pattern = fr"{BLOB_ACCOUNT}/([^/]+)/(.+).png"
+    match = re.search(pattern, url)
+    page_source = match.group(2)  
+    return f"formula__{page_source}_{id}.png"
+
+def get_relevant_formula(result, url):
     if not result.pages[0].formulas:
         return []
     return [
         DocumentWord(content=f'{generate_filename(url, formula_id)}', polygon=f.polygon, span=f.span, confidence=f.confidence)
+        for formula_id, f in enumerate(result.pages[0].formulas)
+        # Filter formulas that have a significant width
+        if is_complex_formula(f.value)
+    ]
+
+def get_relevant_formula_for_normalised_images(result, identifier):
+    if not result.pages[0].formulas:
+        return []
+    return [
+        DocumentWord(content=f'formula_{identifier}_{formula_id}.png', polygon=f.polygon, span=f.span, confidence=f.confidence)
         for formula_id, f in enumerate(result.pages[0].formulas)
         # Filter formulas that have a significant width
         if is_complex_formula(f.value)
