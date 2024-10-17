@@ -1252,22 +1252,15 @@ def extract_text_with_substring(blob_service_client, url):
     temp_doc_path = None
     text_with_subscript = ""
 
-    try:
-        # Check if the blob exists before attempting to download
-        if blob_exists(blob_service_client, container, docx_name):
-            temp_doc_path = download_file(blob_service_client, docx_url)
-            text_with_subscript = extract_text_with_subscript(temp_doc_path)
-        else:
-            logging.info("Blob does not exist.")
-    except ResourceNotFoundError:
-        logging.info("The specified blob does not exist.")
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
-    finally:
-        # Clean up the temporary file if it was created
-        if temp_doc_path and os.path.exists(temp_doc_path):
-            os.remove(temp_doc_path)
-            logging.info("Temporary file removed.")
+    if blob_exists(blob_service_client, container, docx_name):
+        temp_doc_path = download_file(blob_service_client, docx_url)
+        text_with_subscript = extract_text_with_subscript(temp_doc_path)
+    else:
+        logging.info("Blob does not exist.")
+        
+    if temp_doc_path and os.path.exists(temp_doc_path):
+        os.remove(temp_doc_path)
+        logging.info("Temporary file removed.")
 
     return text_with_subscript
 
