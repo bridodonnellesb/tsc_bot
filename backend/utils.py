@@ -122,16 +122,6 @@ def generate_SAS(url):
 
     return sas_token
 
-# def split_url(url):
-#     url_decoded = unquote(url)
-#     if url_decoded.endswith('/'):
-#         url_decoded = url_decoded[:-1]
-#     pattern = fr"{BLOB_ACCOUNT}/([^/]+)/(.+)"
-#     match = re.search(pattern, url_decoded)
-#     container = match.group(1)
-#     blob = match.group(2)
-#     return container, blob
-
 def split_url(url):
     url_decoded = unquote(url)
     if url_decoded.endswith('/'):

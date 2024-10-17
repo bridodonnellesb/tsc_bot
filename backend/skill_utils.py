@@ -1,22 +1,11 @@
-
-from azure.identity import DefaultAzureCredential
-
 import logging
 import os
-import requests
-import subprocess
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
 import re
-from urllib.parse import unquote, urlparse
-from datetime import datetime, timedelta, timezone
-from pdf2image import convert_from_path
 from io import BytesIO
 from PIL import Image
-import uuid
 from docx import Document
 
-from azure.storage.blob import BlobServiceClient, ContentSettings
+from azure.storage.blob import ContentSettings
 from azure.core.exceptions import ResourceNotFoundError
 
 from backend.utils import (
@@ -30,8 +19,6 @@ DOCUMENT_INTELLIGENCE_KEY = os.environ.get("DOCUMENT_INTELLIGENCE_KEY")
 BLOB_CREDENTIAL = os.environ.get("BLOB_CREDENTIAL")
 BLOB_ACCOUNT = os.environ.get("BLOB_ACCOUNT")
 FORMULA_IMAGE_CONTAINER = os.environ.get("CONTAINER_FORMULA_IMAGE")
-PAGE_IMAGE_CONTAINER = os.environ.get("CONTAINER_PAGE_IMAGE")
-PDF_CONTAINER = os.environ.get("CONTAINER_PDF")
 LOCAL_TEMP_DIR = os.environ.get("LOCAL_TEMP_DIR")
  
 def blob_exists(blob_service_client, container, blob_name):
@@ -57,48 +44,7 @@ def download_file(blob_service_client, url):
         raise  # Re-raise the exception to be handled by the caller
 
     return local_filepath
-
  
-# def upload_pdf_to_blob_storage(blob_service_client, output_dir, blob_name):
-#     blob_client = blob_service_client.get_blob_client(container=PDF_CONTAINER, blob=blob_name)
-#     with open(file=output_dir+blob_name, mode="rb") as data:
-#         blob_client.upload_blob(data, overwrite=True)
-#     properties = blob_client.get_blob_properties()
-#     blob_headers = ContentSettings(content_type="application/pdf",
-#                                 content_encoding=properties.content_settings.content_encoding,
-#                                 content_language=properties.content_settings.content_language,
-#                                 content_disposition="inline",
-#                                 cache_control=properties.content_settings.cache_control,
-#                                 content_md5=properties.content_settings.content_md5)
-#     blob_client.set_http_headers(blob_headers)
-#     print(f"Uploaded {blob_name} to Blob Storage")
- 
- 
-def upload_images_to_blob_storage(blob_service_client, img_byte_arr, image_blob_name):
-    blob_client = blob_service_client.get_blob_client(container=PAGE_IMAGE_CONTAINER, blob=image_blob_name)
-    blob_client.upload_blob(img_byte_arr, blob_type="BlockBlob", overwrite=True)
-    properties = blob_client.get_blob_properties()
-    blob_headers = ContentSettings(content_type="image/png",
-                                content_encoding=properties.content_settings.content_encoding,
-                                content_language=properties.content_settings.content_language,
-                                content_disposition="inline",
-                                cache_control=properties.content_settings.cache_control,
-                                content_md5=properties.content_settings.content_md5)
-    blob_client.set_http_headers(blob_headers)
-    print(f"Uploaded {image_blob_name} to Blob Storage")
- 
-def docx_to_pdf_name(filepath):
-    # Extract the file name from the file path
-    file_name = os.path.basename(filepath)
-    return file_name.replace("docx","pdf")
- 
-# def convert_docx_to_pdf(blob_service_client, doc_path):
-#     subprocess.run(['libreoffice', '--headless', '--convert-to', 'pdf', doc_path, '--outdir', LOCAL_TEMP_DIR])
-#     print(f"Converted '{doc_path}' to PDF successfully.")
-#     blob_name = docx_to_pdf_name(doc_path)
-#     upload_pdf_to_blob_storage(blob_service_client, LOCAL_TEMP_DIR, blob_name)
-#     return blob_name
-   
 def extract_text_with_subscript(doc_path):
     doc = Document(doc_path)
     extracted_text = ""
@@ -127,29 +73,6 @@ def extract_text_with_subscript(doc_path):
         extracted_text += "\n"  # New line after each paragraph
     print("Extracted subscript from word document.")
     return extracted_text
- 
-# def convert_docx_to_images(blob_service_client, doc_path, output_dir):
-#     blob_name = convert_docx_to_pdf(blob_service_client, doc_path)
-#     file_name = blob_name.replace(".pdf","")
-#     pdf_path = f'{output_dir}{blob_name}'
-#     # Convert PDF to a list of images
-#     images = convert_from_path(pdf_path)
-#     images_array = []
-#     # Upload each image to Blob Storage
-#     for i, image in enumerate(images):
-#         # Convert image to bytes
-#         img_byte_arr = BytesIO()
-#         image.save(img_byte_arr, format='PNG')
-#         img_byte_arr = img_byte_arr.getvalue()
-#         # Create a new blob for the image
-#         image_blob_name = f"{file_name}_page_{i+1}.png"
-#         upload_images_to_blob_storage(blob_service_client, img_byte_arr, image_blob_name)
-#         images_array.append(f"{BLOB_ACCOUNT}/{PAGE_IMAGE_CONTAINER}/{image_blob_name}")
-#     print("Finished image upload.")
-#     os.remove(pdf_path)
-#     print("Removed PDF from local machine.")
-#     return images_array, blob_name
-
 
 ############## Clean Text ##################
 class Point:
@@ -321,22 +244,6 @@ def is_complex_formula(formula):
             return True
     # If none of the complex patterns are found, it's a simple formula
     return False
-
-# def generate_filename(url, id):
-#     pattern = fr"{BLOB_ACCOUNT}/([^/]+)/(.+).png"
-#     match = re.search(pattern, url)
-#     page_source = match.group(2)  
-#     return f"formula__{page_source}_{id}.png"
-
-# def get_relevant_formula(result, url):
-#     if not result.pages[0].formulas:
-#         return []
-#     return [
-#         DocumentWord(content=f'{generate_filename(url, formula_id)}', polygon=f.polygon, span=f.span, confidence=f.confidence)
-#         for formula_id, f in enumerate(result.pages[0].formulas)
-#         # Filter formulas that have a significant width
-#         if is_complex_formula(f.value)
-#     ]
 
 def get_relevant_formula_for_normalised_images(result, identifier):
     if not result.pages[0].formulas:
