@@ -643,7 +643,7 @@ const Chat = () => {
     // Update the width, height, and maxWidth states on window resize
     useEffect(() => {
         const handleResize = () => {
-            setWidth(window.innerWidth * 0.3);
+            setWidth(prevWidth => Math.min(prevWidth, window.innerWidth * 0.9)); // Ensure the width does not exceed 90% after resize
             setHeight(window.innerHeight);
             setMaxWidth(window.innerWidth * 0.9);
         };

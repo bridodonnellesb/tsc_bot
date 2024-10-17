@@ -1,6 +1,7 @@
 
 from azure.identity import DefaultAzureCredential
 
+import logging
 import os
 import requests
 import subprocess
@@ -33,21 +34,30 @@ PAGE_IMAGE_CONTAINER = os.environ.get("CONTAINER_PAGE_IMAGE")
 PDF_CONTAINER = os.environ.get("CONTAINER_PDF")
 LOCAL_TEMP_DIR = os.environ.get("LOCAL_TEMP_DIR")
  
+def blob_exists(blob_service_client, container, blob_name):
+    blob_client = blob_service_client.get_blob_client(container=container, blob=blob_name)
+    try:
+        blob_client.get_blob_properties()
+        return True
+    except ResourceNotFoundError:
+        return False
+
 def download_file(blob_service_client, url):
     blob_container, blob_name = split_url(url)
-    local_filepath = f'{LOCAL_TEMP_DIR}{blob_name}'
+    local_filepath = f'{LOCAL_TEMP_DIR}/{blob_name}'
     blob_client = blob_service_client.get_blob_client(container=blob_container, blob=blob_name)
+
     try:
         with open(local_filepath, "wb") as downloaded_file:
             download_stream = blob_client.download_blob()
             downloaded_file.write(download_stream.readall())
-        print("Downloaded Word Document")
-    except ResourceNotFoundError:
-        print("The specified blob does not exist.")
+        logging.info("Downloaded Word Document")
     except Exception as e:
-        print(f"An error occurred: {e}")
- 
-    return blob_name
+        logging.error(f"An error occurred while downloading the file: {e}")
+        raise  # Re-raise the exception to be handled by the caller
+
+    return local_filepath
+
  
 # def upload_pdf_to_blob_storage(blob_service_client, output_dir, blob_name):
 #     blob_client = blob_service_client.get_blob_client(container=PDF_CONTAINER, blob=blob_name)
@@ -312,21 +322,21 @@ def is_complex_formula(formula):
     # If none of the complex patterns are found, it's a simple formula
     return False
 
-def generate_filename(url, id):
-    pattern = fr"{BLOB_ACCOUNT}/([^/]+)/(.+).png"
-    match = re.search(pattern, url)
-    page_source = match.group(2)  
-    return f"formula__{page_source}_{id}.png"
+# def generate_filename(url, id):
+#     pattern = fr"{BLOB_ACCOUNT}/([^/]+)/(.+).png"
+#     match = re.search(pattern, url)
+#     page_source = match.group(2)  
+#     return f"formula__{page_source}_{id}.png"
 
-def get_relevant_formula(result, url):
-    if not result.pages[0].formulas:
-        return []
-    return [
-        DocumentWord(content=f'{generate_filename(url, formula_id)}', polygon=f.polygon, span=f.span, confidence=f.confidence)
-        for formula_id, f in enumerate(result.pages[0].formulas)
-        # Filter formulas that have a significant width
-        if is_complex_formula(f.value)
-    ]
+# def get_relevant_formula(result, url):
+#     if not result.pages[0].formulas:
+#         return []
+#     return [
+#         DocumentWord(content=f'{generate_filename(url, formula_id)}', polygon=f.polygon, span=f.span, confidence=f.confidence)
+#         for formula_id, f in enumerate(result.pages[0].formulas)
+#         # Filter formulas that have a significant width
+#         if is_complex_formula(f.value)
+#     ]
 
 def get_relevant_formula_for_normalised_images(result, identifier):
     if not result.pages[0].formulas:
