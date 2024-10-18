@@ -1034,7 +1034,7 @@ def extract_text_with_substring(blob_service_client, url):
     temp_doc_path = None
     text_with_subscript = ""
 
-    if blob_exists(blob_service_client, container, docx_name):
+    if blob_exists(blob_service_client, DOCX_CONTAINER, docx_name):
         temp_doc_path = download_file(blob_service_client, docx_url)
         text_with_subscript = extract_text_with_subscript(temp_doc_path)
     else:
