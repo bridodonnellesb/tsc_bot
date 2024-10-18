@@ -1094,6 +1094,7 @@ def extract_formulas_with_image_data(blob_service_client, document_analysis_clie
     result = poller.result()
     
     logging.info(f"Checking results")
+    updated_content = [] 
     if len(result.pages[0].words)>0:
         content = result.pages[0].words
         logging.info(f"Getting relevant formulas")

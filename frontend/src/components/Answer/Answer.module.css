@@ -64,8 +64,6 @@
 .citationWrapper {
     margin-top: 8px; /* Make sure to include the unit 'px' */
     display: flex;
-    flex-flow: row wrap; /* Updated to row wrap */
-    align-content: flex-start; /* Aligns wrapped lines at the start of the container */
     max-height: 150px;
     gap: 4px;
 }

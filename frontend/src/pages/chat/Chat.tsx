@@ -64,7 +64,6 @@ const Chat = () => {
     const [iframeState, setIframeState] = useState<number>(0);
     const [width, setWidth] = useState(window.innerWidth * 0.3); // Initial width set to 300px
     const [height, setHeight] = useState(window.innerHeight);
-    const [maxWidth, setMaxWidth] = useState(window.innerWidth * 0.9);
 
     const errorDialogContentProps = {
         type: DialogType.close,
@@ -643,9 +642,7 @@ const Chat = () => {
     // Update the width, height, and maxWidth states on window resize
     useEffect(() => {
         const handleResize = () => {
-            setWidth(prevWidth => Math.min(prevWidth, window.innerWidth * 0.9)); // Ensure the width does not exceed 90% after resize
             setHeight(window.innerHeight);
-            setMaxWidth(window.innerWidth * 0.9);
         };
 
         window.addEventListener('resize', handleResize);
@@ -799,7 +796,7 @@ const Chat = () => {
                             resizeHandles={['w']}
                             draggableOpts={{ grid: [50, 50] }}
                             minConstraints={[200, height]}
-                            maxConstraints={[maxWidth, height]}
+                            maxConstraints={[1000, height]}
                         >
                                 <Stack.Item className={styles.citationPanel} style={{ width: `${width}px`}} tabIndex={0} role="tabpanel" aria-label="Citations Panel">
                                     <Stack aria-label="Citations Panel Header Container" horizontal className={styles.citationPanelHeaderContainer} horizontalAlign="space-between" verticalAlign="center">
