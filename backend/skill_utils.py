@@ -130,7 +130,7 @@ def overwrite_words_with_formulas(words, formulas):
  
 def fix_greek_letters(docx_text, ocr_text):
     # Define a mapping of Greek letters to their commonly mistaken Latin counterparts
-    greek_to_latin_mapping = {'β': 'B', 'γ': 'y', 'φ':'o', 'α':'a', 'Ω':'Q','Θ': 'O'}
+    greek_to_latin_mapping = {'β': 'B', 'γ': 'y', 'φ':'o', 'α':'a', 'Ω':'Q','Θ': 'O', 'ω':"w"}
    
     # Regular expression to find Greek letters
     greek_letter_regex = r'[\u0370-\u03FF]'
