@@ -130,7 +130,7 @@ def overwrite_words_with_formulas(words, formulas):
  
 def fix_greek_letters(docx_text, ocr_text):
     # Define a mapping of Greek letters to their commonly mistaken Latin counterparts
-    greek_to_latin_mapping = {'β': 'B', 'γ': 'y', 'φ':'o', 'α':'a', 'Ω':'Q'}
+    greek_to_latin_mapping = {'β': 'B', 'γ': 'y', 'φ':'o', 'α':'a', 'Ω':'Q','Θ': 'O'}
    
     # Regular expression to find Greek letters
     greek_letter_regex = r'[\u0370-\u03FF]'
@@ -148,14 +148,17 @@ def fix_greek_letters(docx_text, ocr_text):
     # Function to replace Latin characters with Greek letters based on snippets
     def replace_in_ocr(ocr_text, snippets, mapping):
         for greek_letter, snippet, start, end in snippets:
-            latin_char = mapping[greek_letter]
-            # Create a pattern to match the snippet in the OCR text, allowing for some variation
-            pattern = re.escape(snippet).replace(greek_letter, latin_char)
-            # Find the snippet in the OCR text
-            match = re.search(pattern, ocr_text)
-            if match:
-                # Replace the Latin character with the Greek letter
-                ocr_text = ocr_text[:match.start()] + ocr_text[match.start():match.end()].replace(latin_char, greek_letter, 1) + ocr_text[match.end():]
+            if greek_letter in mapping:
+                latin_char = mapping[greek_letter]
+                # Create a pattern to match the snippet in the OCR text, allowing for some variation
+                pattern = re.escape(snippet).replace(greek_letter, latin_char)
+                # Find the snippet in the OCR text
+                match = re.search(pattern, ocr_text)
+                if match:
+                    # Replace the Latin character with the Greek letter
+                    ocr_text = ocr_text[:match.start()] + ocr_text[match.start():match.end()].replace(latin_char, greek_letter, 1) + ocr_text[match.end():]
+            else:
+                print(f"Warning: No mapping found for Greek letter '{greek_letter}'. It has been skipped.")
         return ocr_text
    
     # Extract snippets around Greek letters in the docx_text
