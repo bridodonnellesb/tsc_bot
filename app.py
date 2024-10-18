@@ -1072,8 +1072,16 @@ async def get_docx_text():
         response = jsonify({"values":response_array})
         return response, 200  # Status code should be 200 for success
     except Exception as e:
-        logging.exception("Unexpected exception in /skillset/get_docx_text")
-        return jsonify({"Unexpected error in /skillset/get_docx_text": str(e)}), 500
+        # Capture the traceback
+        tb = traceback.format_exc()
+        # Log the traceback along with the exception message
+        logging.exception(f"Unexpected exception in /skillset/get_docx_text: {str(e)}\n{tb}")
+        # Return the traceback information in the response
+        return jsonify({
+            "error": "Unexpected error in /skillset/get_docx_text",
+            "exception": str(e),
+            "traceback": tb
+        }), 500
 
 
 ######################## Get Formulas Skill ###################################################
@@ -1197,8 +1205,15 @@ async def get_page_number():
         return response, 200  # Status code should be 200 for success
 
     except Exception as e:
-        logging.exception("Exception in /skillset/get_page_number")
-        exception = str(e)
-        return jsonify({"Unexpected error in /skillset/get_page_number": exception}), 500
+        # Capture the traceback
+        tb = traceback.format_exc()
+        # Log the traceback along with the exception message
+        logging.exception(f"Unexpected exception in /skillset/get_page_number: {str(e)}\n{tb}")
+        # Return the traceback information in the response
+        return jsonify({
+            "error": "Unexpected error in /skillset/get_page_number",
+            "exception": str(e),
+            "traceback": tb
+        }), 500
 
 app = create_app()
