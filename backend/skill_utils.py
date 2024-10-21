@@ -1,12 +1,14 @@
 import logging
 import os
 import re
+import time
 from io import BytesIO
 from PIL import Image
 from docx import Document
 
 from azure.storage.blob import ContentSettings
-from azure.core.exceptions import ResourceNotFoundError
+from azure.ai.formrecognizer import AnalysisFeature
+from azure.core.exceptions import ResourceNotFoundError, ServiceResponseError
 
 from backend.utils import (
     split_url
@@ -20,7 +22,7 @@ BLOB_CREDENTIAL = os.environ.get("BLOB_CREDENTIAL")
 BLOB_ACCOUNT = os.environ.get("BLOB_ACCOUNT")
 FORMULA_IMAGE_CONTAINER = os.environ.get("CONTAINER_FORMULA_IMAGE")
 LOCAL_TEMP_DIR = os.environ.get("LOCAL_TEMP_DIR")
- 
+
 def blob_exists(blob_service_client, container, blob_name):
     blob_client = blob_service_client.get_blob_client(container=container, blob=blob_name)
     try:
@@ -211,6 +213,22 @@ def clean_ocr_text(docx_text, ocr_text):
     cleaned_ocr_text = insert_subscripts(docx_text, ocr_with_greek_letters)
     print("Added subscript tags to OCR text")
     return cleaned_ocr_text
+
+def analyze_document_with_retry(document_analysis_client, image_bytes, max_retries=5, retry_delay=5):
+    warnings = []
+    for attempt in range(max_retries):
+        try:
+            poller = document_analysis_client.begin_analyze_document(
+                "prebuilt-read", document=image_bytes, features=[AnalysisFeature.FORMULAS]
+            )
+            return poller.result(), warnings
+        except ServiceResponseError as e:
+            warning_message = f"Attempt {attempt+1} failed with error: {e}. Retrying in {retry_delay} seconds..."
+            logging.warning(warning_message)
+            warnings.append(warning_message)
+            time.sleep(retry_delay)
+            retry_delay+=5
+    raise Exception("Failed to analyze document after retries.")
 
 def screenshot_formula(blob_service_client, image_bytes, formula_filepath, points):
     image = Image.open(BytesIO(image_bytes))

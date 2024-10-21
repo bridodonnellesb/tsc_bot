@@ -19,7 +19,7 @@ from quart import (
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
+from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 
 from openai import AsyncAzureOpenAI
@@ -45,7 +45,8 @@ from backend.skill_utils import (
     get_relevant_formula_for_normalised_images,
     screenshot_formula,
     overwrite_words_with_formulas,
-    clean_ocr_text
+    clean_ocr_text,
+    analyze_document_with_retry
 )
 
 bp = Blueprint("routes", __name__, static_folder="static", template_folder="static")
@@ -1088,10 +1089,7 @@ async def get_docx_text():
 
 def extract_formulas_with_image_data(blob_service_client, document_analysis_client, image_data, docx_text, identifier):
     image_bytes = base64.b64decode(image_data)
-    poller = document_analysis_client.begin_analyze_document(
-        "prebuilt-read", document=image_bytes, features=[AnalysisFeature.FORMULAS]
-    )
-    result = poller.result()
+    result, warnings = analyze_document_with_retry(document_analysis_client, image_bytes)
     
     logging.info(f"Checking results")
     updated_content = [] 
@@ -1108,7 +1106,7 @@ def extract_formulas_with_image_data(blob_service_client, document_analysis_clie
     ocr_text = " ".join(item.content for item in updated_content)
     logging.info(f"Cleaning OCR Text")
     final_text = clean_ocr_text(docx_text, ocr_text)
-    return final_text
+    return final_text, warnings
 
 @bp.route("/skillset/clean_text_with_normalised_images", methods=["POST"])
 async def clean_text_with_normalised_images():
@@ -1129,7 +1127,7 @@ async def clean_text_with_normalised_images():
             document_title = item["data"]["title"]
             image_identifier = f"{document_title}_Page{image_page}"
             docx_text = item["data"]["docx_text"].replace(".pdf","").replace(".docx","")
-            final_text = extract_formulas_with_image_data(blob_service_client, document_analysis_client, data, docx_text, image_identifier)
+            final_text, warnings = extract_formulas_with_image_data(blob_service_client, document_analysis_client, data, docx_text, image_identifier)
 
             output={
                 "recordId": item['recordId'],
@@ -1137,7 +1135,7 @@ async def clean_text_with_normalised_images():
                     "text": final_text
                 },
                 "errors": None,
-                "warnings": None
+                "warnings": warnings if warnings else None
             }
             response_array.append(output)
         response = jsonify({"values":response_array})
