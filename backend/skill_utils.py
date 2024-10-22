@@ -215,20 +215,19 @@ def clean_ocr_text(docx_text, ocr_text):
     return cleaned_ocr_text
 
 def analyze_document_with_retry(document_analysis_client, image_bytes, max_retries=5, retry_delay=5):
-    warnings = []
     for attempt in range(max_retries):
         try:
             poller = document_analysis_client.begin_analyze_document(
                 "prebuilt-read", document=image_bytes, features=[AnalysisFeature.FORMULAS]
             )
-            return poller.result(), warnings
+            return poller.result()
         except ServiceResponseError as e:
             warning_message = f"Attempt {attempt+1} failed with error: {e}. Retrying in {retry_delay} seconds..."
             logging.warning(warning_message)
-            warnings.append(warning_message)
             time.sleep(retry_delay)
             retry_delay+=5
-    raise Exception("Failed to analyze document after retries.")
+    logging.error("Failed to analyze document after retries.")
+    return None
 
 def screenshot_formula(blob_service_client, image_bytes, formula_filepath, points):
     image = Image.open(BytesIO(image_bytes))
