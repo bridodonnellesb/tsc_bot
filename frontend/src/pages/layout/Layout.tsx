@@ -281,6 +281,7 @@ const Layout = () => {
                         {(appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured) &&
                             <HistoryButton onClick={handleHistoryClick} text={appStateContext?.state?.isChatHistoryOpen ? hideHistoryLabel : showHistoryLabel} />
                         }
+                        <HistoryButton onClick={handleHistoryClick} text={appStateContext?.state?.isChatHistoryOpen ? hideHistoryLabel : showHistoryLabel} />
                         {ui?.show_share_button &&<ShareButton onClick={handleShareClick} text={shareLabel} />}
                     </Stack>
                 </Stack>

@@ -89,7 +89,6 @@ export const historyRead = async (convId: string): Promise<ChatMessage[]> => {
         let messages: ChatMessage[] = [];
         if(payload?.messages){
             payload.messages.forEach((msg: any) => {
-                console.log("msg ", msg)
                 const message: ChatMessage = {
                     id: msg.id,
                     role: msg.role,

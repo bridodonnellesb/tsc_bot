@@ -1,7 +1,6 @@
 import { useRef, useState, useEffect, useContext, useLayoutEffect, useCallback } from "react";
 import { CommandBarButton, IconButton, Dialog, DialogType, Stack, Dropdown, IDropdownOption } from "@fluentui/react";
 import { SquareRegular, ShieldLockRegular, ErrorCircleRegular, FilterDismiss16Regular, DividerShort16Filled } from "@fluentui/react-icons";
-import { ResizableBox, ResizeCallbackData  } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
@@ -62,8 +61,6 @@ const Chat = () => {
     const [hideErrorDialog, { toggle: toggleErrorDialog }] = useBoolean(true);
     const [errorMsg, setErrorMsg] = useState<ErrorMessage | null>()
     const [iframeState, setIframeState] = useState<number>(0);
-    const [width, setWidth] = useState(window.innerWidth * 0.3); // Initial width set to 300px
-    const [height, setHeight] = useState(window.innerHeight);
 
     const errorDialogContentProps = {
         type: DialogType.close,
@@ -634,23 +631,6 @@ const Chat = () => {
         return isLoading || (messages && messages.length === 0) || clearingChat || appStateContext?.state.chatHistoryLoadingState === ChatHistoryLoadingState.Loading
     }
 
-    const onResize = (event: React.SyntheticEvent, data: ResizeCallbackData) => {
-        setWidth(data.size.width); // Update the width state
-    };
-
-
-    // Update the width, height, and maxWidth states on window resize
-    useEffect(() => {
-        const handleResize = () => {
-            setHeight(window.innerHeight);
-        };
-
-        window.addEventListener('resize', handleResize);
-
-        // Cleanup function to remove the event listener
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
     return (
         <div className={styles.container} role="main">
             {showAuthMessage ? (
@@ -789,25 +769,16 @@ const Chat = () => {
                     </div>
                     {/* Citation Panel */}
                     {messages && messages.length > 0 && isCitationPanelOpen && activeCitation && (
-                        <ResizableBox
-                            width={width} // Use the width state here
-                            height={height}
-                            onResize={onResize} // Use the onResize function
-                            resizeHandles={['w']}
-                            draggableOpts={{ grid: [50, 50] }}
-                            minConstraints={[200, height]}
-                            maxConstraints={[1000, height]}
-                        >
-                                <Stack.Item className={styles.citationPanel} style={{ width: `${width}px`}} tabIndex={0} role="tabpanel" aria-label="Citations Panel">
-                                    <Stack aria-label="Citations Panel Header Container" horizontal className={styles.citationPanelHeaderContainer} horizontalAlign="space-between" verticalAlign="center">
-                                        <span aria-label="Citations" className={styles.citationPanelHeader}>Citations</span>
-                                        <IconButton iconProps={{ iconName: 'Cancel' }} aria-label="Close citations panel" onClick={() => setIsCitationPanelOpen(false)} />
-                                    </Stack>
-                                    <h5 className={styles.citationPanelTitle} tabIndex={0} title={activeCitation.url ? activeCitation.url : activeCitation.title ?? ""} onClick={() => onViewSource(activeCitation)}>{activeCitation.title}</h5>
-                                    <div className={styles.citationPanelText}>Release Date: {activeCitation.release_date} | Version: {activeCitation.version}</div>
-                                    <iframe key={iframeState} src={activeCitation.url+"#page="+activeCitation.page+"&zoom=50"} width="100%" height="100%"></iframe>
-                                </Stack.Item>
-                        </ResizableBox>
+                        <Stack.Item className={styles.citationPanel} tabIndex={0} role="tabpanel" aria-label="Citations Panel">
+                            <Stack aria-label="Citations Panel Header Container" horizontal className={styles.citationPanelHeaderContainer} horizontalAlign="space-between" verticalAlign="center">
+                                <span aria-label="Citations" className={styles.citationPanelHeader}>Citations</span>
+                                <IconButton iconProps={{ iconName: 'Cancel' }} aria-label="Close citations panel" onClick={() => setIsCitationPanelOpen(false)} />
+                            </Stack>
+                            <h5 className={styles.citationPanelTitle} tabIndex={0} title={activeCitation.url ? activeCitation.url : activeCitation.title ?? ""} onClick={() => onViewSource(activeCitation)}>{activeCitation.title}</h5>
+                            <div className={styles.citationPanelText}>Release Date: {activeCitation.release_date} | Version: {activeCitation.version}</div>
+                            <iframe key={iframeState} src={activeCitation.url+"#page="+activeCitation.page+"&zoom=50"} width="100%" height="100%"></iframe>
+                            <iframe key={iframeState} src={"https://www.sem-o.com/documents/market-modifications/Mod_06_24/Mod_06_24SEMOpreparatoryactionsforART13.7CEP.pdf"} width="100%" height="100%"></iframe>
+                        </Stack.Item>
                     )}
                     {(appStateContext?.state.isChatHistoryOpen && appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured) && <ChatHistoryPanel />}
                 </Stack>

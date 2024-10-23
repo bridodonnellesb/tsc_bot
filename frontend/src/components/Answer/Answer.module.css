@@ -61,9 +61,24 @@
     flex-grow: 0;
 }
 
-.citationWrapper {
-    margin-top: 8px; /* Make sure to include the unit 'px' */
+.filterDescription{
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
     display: flex;
+    align-items: center;
+    text-align: center;
+    color: #ffff00;
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.citationWrapper {
+    margin-top: 8;
+    display: flex;
+    flex-flow: wrap column;
     max-height: 150px;
     gap: 4px;
 }
@@ -144,25 +159,6 @@
     align-items: center;
     color: #ffff00;
 }
-
-.filterDescription{
-    margin-right: 5px;
-    margin-left: 10px;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 16px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #ffff00;
-    flex: none;
-    order: 1;
-    flex-grow: 0;
-    width: 100%; /* This will make the filter description take the full width, forcing it to the next line */
-    order: 2; /* This ensures that the filter description will always come after the citations */
-}
-
 
 .accordionTitle:hover {
     cursor:pointer;

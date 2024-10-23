@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Stack, TextField } from "@fluentui/react";
+import { useState, useRef } from "react";
+import { Stack, TextField, ITextField } from "@fluentui/react"; // Import ITextField for typing
 import { SendRegular } from "@fluentui/react-icons";
 import Send from "../../assets/Send.svg";
 import styles from "./QuestionInput.module.css";

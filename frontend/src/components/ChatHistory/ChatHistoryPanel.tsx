@@ -32,7 +32,7 @@ export function ChatHistoryPanel(props: ChatHistoryPanelProps) {
     const [showContextualMenu, setShowContextualMenu] = React.useState(false);
     const [hideClearAllDialog, { toggle: toggleClearAllDialog }] = useBoolean(true);
     const [clearing, setClearing] = React.useState(false)
-    const [clearingError, setClearingError] = React.useState(false)
+    const [clearingError, setClearingError] = React.useState(false)    
 
     const clearAllDialogContentProps = {
         type: DialogType.close,
@@ -174,7 +174,7 @@ export function ChatHistoryPanel(props: ChatHistoryPanelProps) {
             </Stack>
             <Dialog
                 hidden={hideClearAllDialog}
-                onDismiss={clearing ? ()=>{} : onHideClearAllDialog}
+                onDismiss={clearing ? () => {} : onHideClearAllDialog}
                 dialogContentProps={clearAllDialogContentProps}
                 modalProps={modalProps}
             >
