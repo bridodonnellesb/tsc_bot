@@ -316,7 +316,6 @@ export const Answer = ({
                                     <div className={styles.citation}>{idx}</div>
                                     {createCitationFilepath(citation, idx, true)}
                                 </span>);
-                                
                         })}
                     </div>
                 }

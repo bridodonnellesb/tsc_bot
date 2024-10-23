@@ -39,6 +39,7 @@
     height: auto;
     box-sizing: border-box;
     justify-content: space-between;
+    align-items: flex-start;
 }
 
 .answerDisclaimerContainer {
@@ -47,6 +48,9 @@
 }
 
 .answerDisclaimer {
+    margin-left: auto; /* Push to the right side */
+    justify-content: center;
+
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
@@ -62,6 +66,9 @@
 }
 
 .filterDescription{
+    margin-left: auto; /* Push to the right side */
+    justify-content: center;
+    
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
