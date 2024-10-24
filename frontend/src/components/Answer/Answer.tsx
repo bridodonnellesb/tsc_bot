@@ -200,22 +200,22 @@ export const Answer = ({
         }
         return (
             filters.length > 0 ? (
-                <Stack className={styles.answerFooter}>
-                    <Stack.Item className={styles.answerFooterText}>
-                        <span>Selected Filters:</span>
-                    </Stack.Item>
+                <div className={styles.filterDescriptionsWrapper}>
+                    <span className={styles.filterContainer}>
+                        <div className={styles.filterHeader}>Selected Filters:</div>
+                    </span>
                     {filters.map((filter, index) => (
-                        <Stack.Item key={index} className={styles.answerFooterText}>
-                            <span>{filter}</span>
-                        </Stack.Item>
+                        <span key={index} className={styles.filterContainer}>
+                            <div className={styles.filterText}>{filter}</div>
+                        </span>
                     ))}
-                </Stack>
+                </div>
             ) : (
-                <Stack className={styles.answerFooter}>
-                    <Stack.Item className={styles.answerFooterText}>
-                        <span>No Filters set</span>
-                    </Stack.Item>
-                </Stack>
+                <div className={styles.filterDescriptionsWrapper}>
+                    <span className={styles.filterContainer}>
+                        <div className={styles.filterText}>No Filters set</div>
+                    </span>
+                </div>
             )
         );
     };
@@ -233,7 +233,6 @@ export const Answer = ({
     return (
         <>
             <Stack className={styles.answerContainer} tabIndex={0}>
-                
                 <Stack.Item>
                     <Stack horizontal grow>
                         <Stack.Item grow>
@@ -246,46 +245,48 @@ export const Answer = ({
                             />
                         </Stack.Item>
                         <Stack.Item className={styles.answerHeader}>
-                            {FEEDBACK_ENABLED && answer.message_id !== undefined && <Stack horizontal horizontalAlign="space-between">
-                                {copyMessageClicked && <span className={styles.copyButtonText}>Copied</span>}
-                                <Copy20Regular
-                                    aria-label="Copy"
-                                    className={styles.copyButton}
-                                    onClick={handleCopyMessageClick}
-                                    onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleCopyMessageClick()}
-                                    tabIndex={0}
-                                />
-                                <ThumbLike20Filled
-                                    aria-hidden="false"
-                                    aria-label="Like this response"
-                                    onClick={() => onLikeResponseClicked()}
-                                    style={feedbackState === Feedback.Positive || appStateContext?.state.feedbackState[answer.message_id] === Feedback.Positive ? 
-                                        { color: "darkgreen", cursor: "pointer" } : 
-                                        { color: "slategray", cursor: "pointer" }}
-                                    onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onLikeResponseClicked()}
-                                    tabIndex={0}
-                                />
-                                <ThumbDislike20Filled
-                                    aria-hidden="false"
-                                    aria-label="Dislike this response"
-                                    onClick={() => onDislikeResponseClicked()}
-                                    style={(feedbackState !== Feedback.Positive && feedbackState !== Feedback.Neutral && feedbackState !== undefined) ? 
-                                        { color: "darkred", cursor: "pointer" } : 
-                                        { color: "slategray", cursor: "pointer" }}
-                                    onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onDislikeResponseClicked()}
-                                    tabIndex={0}
-                                />
-                            </Stack>}
+                            {FEEDBACK_ENABLED && answer.message_id !== undefined && 
+                                <Stack horizontal horizontalAlign="space-between">
+                                    {copyMessageClicked && <span className={styles.copyButtonText}>Copied</span>}
+                                    <Copy20Regular
+                                        aria-label="Copy"
+                                        className={styles.copyButton}
+                                        onClick={handleCopyMessageClick}
+                                        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleCopyMessageClick()}
+                                        tabIndex={0}
+                                    />
+                                    <ThumbLike20Filled
+                                        aria-hidden="false"
+                                        aria-label="Like this response"
+                                        onClick={() => onLikeResponseClicked()}
+                                        style={feedbackState === Feedback.Positive || appStateContext?.state.feedbackState[answer.message_id] === Feedback.Positive ? 
+                                            { color: "darkgreen", cursor: "pointer" } : 
+                                            { color: "slategray", cursor: "pointer" }}
+                                        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onLikeResponseClicked()}
+                                        tabIndex={0}
+                                    />
+                                    <ThumbDislike20Filled
+                                        aria-hidden="false"
+                                        aria-label="Dislike this response"
+                                        onClick={() => onDislikeResponseClicked()}
+                                        style={(feedbackState !== Feedback.Positive && feedbackState !== Feedback.Neutral && feedbackState !== undefined) ? 
+                                            { color: "darkred", cursor: "pointer" } : 
+                                            { color: "slategray", cursor: "pointer" }}
+                                        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onDislikeResponseClicked()}
+                                        tabIndex={0}
+                                    />
+                                </Stack>
+                            }
                         </Stack.Item>
                     </Stack>
                     
                 </Stack.Item>
                 <Stack horizontal className={styles.answerFooter}>
                     <Stack.Item className={styles.answerDisclaimerContainer}>
-                        <span className={styles.answerFooterText}>AI-generated content may be incorrect. </span>
+                        <span className={styles.answerDisclaimer}>AI-generated content may be incorrect. </span>
                     </Stack.Item>
                     <Stack.Item className={styles.answerDisclaimerContainer}>
-                        <span className={styles.answerFooterText}>Results based on documents retrieved from SEM-O website on 09/10/2024.</span>
+                        <span className={styles.answerDisclaimer}>Results based on documents retrieved from SEM-O website on 09/10/2024.</span>
                     </Stack.Item>
                 </Stack>
                 <Stack horizontal className={styles.answerFooter}>
@@ -313,35 +314,35 @@ export const Answer = ({
                         </Stack.Item>
                     )}
                 </Stack>
-                {chevronIsExpanded &&
-                    <div className={styles.citationWrapper} >
-                        {parsedAnswer.citations.map((citation, idx) => {
-                            return (
-                                <span 
-                                    title={createCitationFilepath(citation, ++idx)} 
-                                    tabIndex={0} 
-                                    role="link" 
-                                    key={idx} 
-                                    onClick={() => onCitationClicked(citation)} 
-                                    onKeyDown={e => e.key === "Enter" || e.key === " " ? onCitationClicked(citation) : null}
-                                    className={styles.citationContainer}
-                                    aria-label={createCitationFilepath(citation, idx)}
-                                >
-                                    <div className={styles.citation}>{idx}</div>
-                                    {createCitationFilepath(citation, idx, true)}
-                                </span>);
-                        })}
-                        <Stack horizontal className={styles.answerFooter}>
-                            <Stack.Item >
-                                { getActiveFiltersDescription(
-                                    parsedAnswer.types_filter,
-                                    parsedAnswer.rules_filter,
-                                    parsedAnswer.parts_filter
-                                )} 
-                            </Stack.Item>
-                        </Stack>
-                    </div>
-                }
+                {chevronIsExpanded && (
+                    <>
+                        <div className={styles.citationWrapper} >
+                            {parsedAnswer.citations.map((citation, idx) => {
+                                return (
+                                    <span 
+                                        title={createCitationFilepath(citation, idx + 1)} 
+                                        tabIndex={0} 
+                                        role="link" 
+                                        key={idx} 
+                                        onClick={() => onCitationClicked(citation)} 
+                                        onKeyDown={e => e.key === "Enter" || e.key === " " ? onCitationClicked(citation) : null}
+                                        className={styles.citationContainer}
+                                        aria-label={createCitationFilepath(citation, idx + 1)}
+                                    >
+                                        <div className={styles.citation}>{idx + 1}</div>
+                                        {createCitationFilepath(citation, idx + 1, true)}
+                                    </span>);
+                            })}
+                        </div>
+                        {
+                            getActiveFiltersDescription(
+                                parsedAnswer.types_filter,
+                                parsedAnswer.rules_filter,
+                                parsedAnswer.parts_filter
+                            )
+                        } 
+                    </>
+                )}
             </Stack>
             <Dialog 
                 onDismiss={() => {

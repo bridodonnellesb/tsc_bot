@@ -47,7 +47,7 @@
     display: flex;
 }
 
-.answerFooterText {
+.answerDisclaimer {
     margin-right: 5px;
     margin-left: 10px;
     justify-content: center;
@@ -56,11 +56,65 @@
     font-weight: 400;
     font-size: 12px;
     line-height: 16px;
+    color: #ffff00;
 
     display: flex;
     align-items: center;
     text-align: center;
+    flex: none;
+}
+
+.filterDescriptionsWrapper {
+    margin-top: 8;
+    display: flex;
+    flex-flow: wrap column;
+    max-height: 150px;
+    gap: 4px;
+}
+
+.filterContainer {
+    margin-left: 10px;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 6px;
+}
+
+.filterHeader{
+    margin-right: 5px;
+    margin-left: 10px;
+    justify-content: center;
+
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
     color: #ffff00;
+
+    display: flex;
+    align-items: center;
+    text-align: center;
+    flex: none;
+}
+
+.filterText{
+    margin-right: 5px;
+    margin-left: 40px;
+    justify-content: center;
+
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #ffff00;
+
+    display: flex;
+    align-items: center;
+    text-align: center;
     flex: none;
 }
 
