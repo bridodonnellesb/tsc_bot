@@ -265,6 +265,9 @@ export const Answer = ({
                     <Stack.Item className={styles.answerDisclaimerContainer}>
                         <span className={styles.answerDisclaimer}>AI-generated content may be incorrect. </span>
                     </Stack.Item>
+                    <Stack.Item className={styles.answerDisclaimerContainer}>
+                        <span className={styles.answerDisclaimer}>Results based on documents retrieved from SEM-O website on 09/10/2024.</span>
+                    </Stack.Item>
                 </Stack>
                 <Stack horizontal className={styles.answerFooter}>
                     {!!parsedAnswer.citations.length && (
@@ -290,9 +293,6 @@ export const Answer = ({
                             </Stack>
                         </Stack.Item>
                     )}
-                    <Stack.Item className={styles.answerDisclaimerContainer}>
-                        <span className={styles.answerDisclaimer}>Results based on documents retrieved from SEM-O website on 09/10/2024.</span>
-                    </Stack.Item>
                 </Stack>
                 {chevronIsExpanded &&
                     <div className={styles.citationWrapper} >
@@ -312,17 +312,17 @@ export const Answer = ({
                                     {createCitationFilepath(citation, idx, true)}
                                 </span>);
                         })}
+                        <Stack horizontal className={styles.answerFooter}>
+                            <Stack.Item className={styles.filterDescription}>
+                                { getActiveFiltersDescription(
+                                    parsedAnswer.types_filter,
+                                    parsedAnswer.rules_filter,
+                                    parsedAnswer.parts_filter
+                                )} 
+                            </Stack.Item>
+                        </Stack>
                     </div>
                 }
-                <Stack horizontal className={styles.answerFooter}>
-                    <Stack.Item className={styles.filterDescription}>
-                        { getActiveFiltersDescription(
-                            parsedAnswer.types_filter,
-                            parsedAnswer.rules_filter,
-                            parsedAnswer.parts_filter
-                        )} 
-                    </Stack.Item>
-                </Stack>
             </Stack>
             <Dialog 
                 onDismiss={() => {
