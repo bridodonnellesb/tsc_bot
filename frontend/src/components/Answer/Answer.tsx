@@ -187,7 +187,7 @@ export const Answer = ({
         typesFilter: string[],
         rulesFilter: string[],
         partsFilter: string[]
-    ): string => {
+    ): JSX.Element => {
         const filters = [];
         if (rulesFilter.length > 0) filters.push(`${rulesFilter.join(' / ')} for the Rules Set`);
         if (typesFilter.length > 0) filters.push(`${typesFilter.join(' / ')} for Document Type`);
@@ -198,8 +198,27 @@ export const Answer = ({
                 filters.push(`${filteredPartsFilter.join(' / ')} for the Trading Settlement Code Part`);
             }
         }
-        return filters.length > 0 ? `Selected Filters: \n${filters.join(';\n')}` : 'No filters active';
-    }
+        return (
+            filters.length > 0 ? (
+                <Stack className={styles.answerFooter}>
+                    <Stack.Item className={styles.answerFooterText}>
+                        <span>Selected Filters:</span>
+                    </Stack.Item>
+                    {filters.map((filter, index) => (
+                        <Stack.Item key={index} className={styles.answerFooterText}>
+                            <span>{filter}</span>
+                        </Stack.Item>
+                    ))}
+                </Stack>
+            ) : (
+                <Stack className={styles.answerFooter}>
+                    <Stack.Item className={styles.answerFooterText}>
+                        <span>No Filters set</span>
+                    </Stack.Item>
+                </Stack>
+            )
+        );
+    };
 
     const handleCopyMessageClick = () => {
         navigator.clipboard.writeText(parsedAnswer.markdownFormatText);
@@ -263,10 +282,10 @@ export const Answer = ({
                 </Stack.Item>
                 <Stack horizontal className={styles.answerFooter}>
                     <Stack.Item className={styles.answerDisclaimerContainer}>
-                        <span className={styles.answerDisclaimer}>AI-generated content may be incorrect. </span>
+                        <span className={styles.answerFooterText}>AI-generated content may be incorrect. </span>
                     </Stack.Item>
                     <Stack.Item className={styles.answerDisclaimerContainer}>
-                        <span className={styles.answerDisclaimer}>Results based on documents retrieved from SEM-O website on 09/10/2024.</span>
+                        <span className={styles.answerFooterText}>Results based on documents retrieved from SEM-O website on 09/10/2024.</span>
                     </Stack.Item>
                 </Stack>
                 <Stack horizontal className={styles.answerFooter}>
@@ -313,7 +332,7 @@ export const Answer = ({
                                 </span>);
                         })}
                         <Stack horizontal className={styles.answerFooter}>
-                            <Stack.Item className={styles.filterDescription}>
+                            <Stack.Item >
                                 { getActiveFiltersDescription(
                                     parsedAnswer.types_filter,
                                     parsedAnswer.rules_filter,

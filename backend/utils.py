@@ -16,6 +16,8 @@ AZURE_SEARCH_PERMITTED_GROUPS_COLUMN = os.environ.get(
     "AZURE_SEARCH_PERMITTED_GROUPS_COLUMN"
 )
 
+STANDARD_NO_DATA_RESPONSE = "The requested information is not found in the retrieved data. Please try another query or topic."
+NO_DATA_FOUND_RESPONSE = os.environ.get("NO_DATA_FOUND_RESPONSE", STANDARD_NO_DATA_RESPONSE)
 BLOB_CREDENTIAL = os.environ.get("BLOB_CREDENTIAL")
 BLOB_ACCOUNT = os.environ.get("BLOB_ACCOUNT")
 
@@ -33,6 +35,15 @@ async def format_as_ndjson(r):
     except Exception as error:
         logging.exception("Exception while generating response stream: %s", error)
         yield json.dumps({"error": str(error)})
+
+
+def preprocess_response(content):
+    '''
+    Preprocessing of bot response before it is returned. Following preprocessing is performed:
+    - Rewrite message returned when AI Search is unable to find data
+    '''
+    content = content.replace("The requested information is not found in the retrieved data. Please try another query or topic.", NO_DATA_FOUND_RESPONSE).replace(r"\u20ac","€")
+    return content
 
 
 def parse_multi_columns(columns: str) -> list:
@@ -180,7 +191,7 @@ def format_non_streaming_response(chatCompletion, history_metadata, apim_request
             response_obj["choices"][0]["messages"].append(
                 {
                     "role": "assistant",
-                    "content": append_SAS_to_image_link(message.content),
+                    "content": preprocess_response(append_SAS_to_image_link(message.content)),
                 }
             )
             return response_obj

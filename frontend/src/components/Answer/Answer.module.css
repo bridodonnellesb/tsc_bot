@@ -47,8 +47,9 @@
     display: flex;
 }
 
-.answerDisclaimer {
-    margin-left: auto; /* Push to the right side */
+.answerFooterText {
+    margin-right: 5px;
+    margin-left: 10px;
     justify-content: center;
 
     font-style: normal;
@@ -61,25 +62,6 @@
     text-align: center;
     color: #ffff00;
     flex: none;
-    order: 1;
-    flex-grow: 0;
-}
-
-.filterDescription{
-    margin-left: auto; /* Push to the right side */
-    justify-content: center;
-    
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 16px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #ffff00;
-    flex: none;
-    order: 1;
-    flex-grow: 0;
 }
 
 .citationWrapper {
