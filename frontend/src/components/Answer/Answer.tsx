@@ -262,6 +262,11 @@ export const Answer = ({
                     
                 </Stack.Item>
                 <Stack horizontal className={styles.answerFooter}>
+                    <Stack.Item className={styles.answerDisclaimerContainer}>
+                        <span className={styles.answerDisclaimer}>AI-generated content may be incorrect. </span>
+                    </Stack.Item>
+                </Stack>
+                <Stack horizontal className={styles.answerFooter}>
                     {!!parsedAnswer.citations.length && (
                         <Stack.Item
                             onKeyDown={e => e.key === "Enter" || e.key === " " ? toggleIsRefAccordionOpen() : null}
@@ -286,17 +291,7 @@ export const Answer = ({
                         </Stack.Item>
                     )}
                     <Stack.Item className={styles.answerDisclaimerContainer}>
-                        <span className={styles.answerDisclaimer}>AI-generated content may be incorrect. </span>
-                    </Stack.Item>
-                    <Stack.Item className={styles.answerDisclaimerContainer}>
                         <span className={styles.answerDisclaimer}>Results based on documents retrieved from SEM-O website on 09/10/2024.</span>
-                    </Stack.Item>
-                    <Stack.Item className={styles.filterDescription}>
-                        { getActiveFiltersDescription(
-                            parsedAnswer.types_filter,
-                            parsedAnswer.rules_filter,
-                            parsedAnswer.parts_filter
-                        )} 
                     </Stack.Item>
                 </Stack>
                 {chevronIsExpanded &&
@@ -319,6 +314,15 @@ export const Answer = ({
                         })}
                     </div>
                 }
+                <Stack horizontal className={styles.answerFooter}>
+                    <Stack.Item className={styles.filterDescription}>
+                        { getActiveFiltersDescription(
+                            parsedAnswer.types_filter,
+                            parsedAnswer.rules_filter,
+                            parsedAnswer.parts_filter
+                        )} 
+                    </Stack.Item>
+                </Stack>
             </Stack>
             <Dialog 
                 onDismiss={() => {

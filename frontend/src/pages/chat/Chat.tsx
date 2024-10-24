@@ -534,8 +534,6 @@ const Chat = () => {
 
     useEffect(() => {
         if (appStateContext?.state.currentChat) {
-            console.log("appStateContext.state.currentChat")
-            console.log(appStateContext.state.currentChat.messages)
             setMessages(appStateContext.state.currentChat.messages)
         } else {
             setMessages([])
